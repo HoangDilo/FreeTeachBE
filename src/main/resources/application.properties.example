@@ -3,6 +3,8 @@ spring.application.name=FreeTeachBE
 springdoc.api-docs.path=/api-docs
 springdoc.swagger-ui.path=/swagger
 
+spring.jpa.hibernate.ddl-auto=update
+
 spring.datasource.url=jdbc:postgresql://localhost:5432/FreeTeach
 spring.datasource.username=postgres
 spring.datasource.password=hoangdilo1412postgres
