@@ -7,20 +7,65 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="User")
+@Table(name="user_account")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
+    private String name;
+    @Column
+    private String email;
+    @Column
+    private String avatarURL;
+    @Column
     private String username;
     @Column
     private String password;
+    @Column
+    private int money;
 
 
-    public UserEntity(String username, String password, List<UserEntity> list) {
+    public UserEntity(Long id, String name, String email, String avatarURL, String username, String password, int money) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.avatarURL = avatarURL;
         this.username = username;
         this.password = password;
+        this.money = money;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAvatarURL() {
+        return avatarURL;
+    }
+
+    public void setAvatarURL(String avatarURL) {
+        this.avatarURL = avatarURL;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
     }
 
     public UserEntity() {
