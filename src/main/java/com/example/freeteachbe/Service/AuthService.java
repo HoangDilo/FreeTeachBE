@@ -1,12 +1,15 @@
 package com.example.freeteachbe.Service;
 
 import com.example.freeteachbe.DTO.LoginDTO;
+import com.example.freeteachbe.DTO.RegisterDTO;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.UserRepository;
 import com.example.freeteachbe.DTO.ServiceReturn.StatusAndMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Service
@@ -31,5 +34,27 @@ public class AuthService {
             }
         }
         return new StatusAndMessage(400, "Tên người dùng hoặc mật khẩu sai");
+    }
+    public StatusAndMessage register(RegisterDTO registerDTO) {
+        String username = registerDTO.getUsername();
+        String email = registerDTO.getEmail();
+        String password = registerDTO.getPassword();
+        String repeatPassword = registerDTO.getRepeatPassword();
+        if(username.isEmpty()) {
+            return new StatusAndMessage(400, "Tên người dùng không được bỏ trống");
+        }
+        if(password.isEmpty()) {
+            return new StatusAndMessage(400, "Mật khẩu không được bỏ trống");
+        }
+        if(email.isEmpty()) {
+            return new StatusAndMessage(400, "Email không được bỏ trống");
+        }
+        if(!password.equals(repeatPassword)) {
+            return new StatusAndMessage(400, "Mật khẩu nhập lại không đúng");
+        }
+        LocalTime time = LocalTime.now();
+        UserEntity user = new UserEntity("user_" + time.toString(), email, "", username, password);
+        ur.save(user);
+        return new StatusAndMessage(200, "Đăng ký thành công");
     }
 }
