@@ -23,8 +23,15 @@ public class UserEntity {
     @Column
     private String password;
     @Column
-    private int money;
+    private int money = 0;
 
+    public UserEntity(String name, String email, String avatarURL, String username, String password) {
+        this.name = name;
+        this.email = email;
+        this.avatarURL = avatarURL;
+        this.username = username;
+        this.password = password;
+    }
 
     public UserEntity(Long id, String name, String email, String avatarURL, String username, String password, int money) {
         this.id = id;
