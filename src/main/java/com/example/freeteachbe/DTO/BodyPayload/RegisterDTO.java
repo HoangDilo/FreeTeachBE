@@ -1,4 +1,4 @@
-package com.example.freeteachbe.DTO;
+package com.example.freeteachbe.DTO.BodyPayload;
 
 public class RegisterDTO {
     private String username;

@@ -24,6 +24,8 @@ public class UserEntity {
     private String password;
     @Column
     private int money = 0;
+    @Column
+    private boolean isFirstLogin = true;
 
     public UserEntity(String name, String email, String avatarURL, String username, String password) {
         this.name = name;
@@ -101,5 +103,13 @@ public class UserEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isFirstLogin() {
+        return isFirstLogin;
+    }
+
+    public void setFirstLogin(boolean firstLogin) {
+        isFirstLogin = firstLogin;
     }
 }

@@ -1,12 +1,14 @@
 package com.example.freeteachbe.Service;
 
-import com.example.freeteachbe.DTO.LoginDTO;
-import com.example.freeteachbe.DTO.RegisterDTO;
+import com.example.freeteachbe.DTO.BodyPayload.LoginDTO;
+import com.example.freeteachbe.DTO.BodyPayload.RegisterDTO;
+import com.example.freeteachbe.DTO.ReturnPayload.DataMessage;
+import com.example.freeteachbe.DTO.ReturnPayload.Message;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.LoginData;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.UserRepository;
-import com.example.freeteachbe.DTO.ServiceReturn.StatusAndMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -17,44 +19,50 @@ public class AuthService {
     @Autowired
     private UserRepository ur;
 
-    public StatusAndMessage login(LoginDTO loginDTO) {
+    public ResponseEntity<Message> login(LoginDTO loginDTO) {
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
         Optional<UserEntity> userFound = ur.findByUsername(username);
         if (username.isEmpty()) {
-            return new StatusAndMessage(400, "Tên đăng nhập không được bỏ trống");
+            return ResponseEntity.status(400).body(new Message("Tên đăng nhập không được để trống"));
         }
         if (password.isEmpty()) {
-            return new StatusAndMessage(400, "Mật khẩu không được bỏ trống");
+            return ResponseEntity.status(400).body(new Message("Mật khẩu không được để trống"));
         }
         if (userFound.isPresent()) {
             UserEntity user = userFound.get();
+            boolean isFirstLogin = user.isFirstLogin();
+            if (user.isFirstLogin()) {
+                user.setFirstLogin(false);
+                ur.save(user);
+            }
             if (user.getPassword().equals(password)) {
-                return new StatusAndMessage(200, "Đăng nhập thành công");
+                LoginData loginData = new LoginData(user.getId(), isFirstLogin);
+                return ResponseEntity.status(200).body(new DataMessage<LoginData>("Đăng nhập thành công", loginData));
             }
         }
-        return new StatusAndMessage(400, "Tên người dùng hoặc mật khẩu sai");
+        return ResponseEntity.status(400).body(new Message("Tên người dùng hoặc mật khẩu sai"));
     }
-    public StatusAndMessage register(RegisterDTO registerDTO) {
+    public ResponseEntity<Message> register(RegisterDTO registerDTO) {
         String username = registerDTO.getUsername();
         String email = registerDTO.getEmail();
         String password = registerDTO.getPassword();
         String repeatPassword = registerDTO.getRepeatPassword();
         if(username.isEmpty()) {
-            return new StatusAndMessage(400, "Tên người dùng không được bỏ trống");
+            return ResponseEntity.status(400).body(new Message("Tên người dùng không được bỏ trống"));
         }
         if(password.isEmpty()) {
-            return new StatusAndMessage(400, "Mật khẩu không được bỏ trống");
+            return ResponseEntity.status(400).body(new Message("Mật khẩu không được bỏ trống"));
         }
         if(email.isEmpty()) {
-            return new StatusAndMessage(400, "Email không được bỏ trống");
+            return ResponseEntity.status(400).body(new Message("Email không được bỏ trống"));
         }
         if(!password.equals(repeatPassword)) {
-            return new StatusAndMessage(400, "Mật khẩu nhập lại không đúng");
+            return ResponseEntity.status(400).body(new Message("Mật khẩu nhập lại không khớp"));
         }
         LocalTime time = LocalTime.now();
         UserEntity user = new UserEntity("user_" + time.toString(), email, "", username, password);
         ur.save(user);
-        return new StatusAndMessage(200, "Đăng ký thành công");
+        return ResponseEntity.status(200).body(new Message("Đăng ký người dùng thành công"));
     }
 }

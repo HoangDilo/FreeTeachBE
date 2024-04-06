@@ -1,11 +1,8 @@
 package com.example.freeteachbe.Controller;
 
-import com.example.freeteachbe.DTO.ControllerReturn.ReturnMessage;
-import com.example.freeteachbe.DTO.LoginDTO;
-import com.example.freeteachbe.DTO.ServiceReturn.StatusAndMessage;
-import com.example.freeteachbe.DTO.UserDTO;
+import com.example.freeteachbe.DTO.BodyPayload.UserDTO;
+import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.Entity.UserEntity;
-import com.example.freeteachbe.Repository.UserRepository;
 import com.example.freeteachbe.Service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +24,7 @@ public class UserController {
         return us.getAllUser();
     }
     @PostMapping("/user/create")
-    public ResponseEntity<ReturnMessage> createUser(@RequestBody UserDTO userDTO) {
-        StatusAndMessage sm = us.createUser(userDTO);
-        return ResponseEntity.status(sm.getStatus()).body(new ReturnMessage(sm.getMessage()));
+    public ResponseEntity<Message> createUser(@RequestBody UserDTO userDTO) {
+        return us.createUser(userDTO);
     }
 }

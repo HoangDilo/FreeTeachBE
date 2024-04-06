@@ -1,9 +1,9 @@
-package com.example.freeteachbe.DTO.ControllerReturn;
+package com.example.freeteachbe.DTO.ReturnPayload;
 
-public class ReturnMessage {
+public class Message {
     private String message;
 
-    public ReturnMessage(String message) {
+    public Message(String message) {
         this.message = message;
     }
 
