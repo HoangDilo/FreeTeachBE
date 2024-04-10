@@ -51,6 +51,10 @@ public class AuthService {
         if(username.isEmpty()) {
             return ResponseEntity.status(400).body(new Message("Tên người dùng không được bỏ trống"));
         }
+        Optional<UserEntity> userFound = ur.findByUsername(username);
+        if(userFound.isPresent()) {
+            return ResponseEntity.status(400).body(new Message("Tên nguời dùng đã được sử dụng"));
+        }
         if(password.isEmpty()) {
             return ResponseEntity.status(400).body(new Message("Mật khẩu không được bỏ trống"));
         }

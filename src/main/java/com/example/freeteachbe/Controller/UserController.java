@@ -7,10 +7,7 @@ import com.example.freeteachbe.Service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +23,9 @@ public class UserController {
     @PostMapping("/user/create")
     public ResponseEntity<Message> createUser(@RequestBody UserDTO userDTO) {
         return us.createUser(userDTO);
+    }
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<Message> deleteUser(@RequestParam Long id) {
+        return us.deleteUser(id);
     }
 }

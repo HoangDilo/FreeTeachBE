@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="user_account")
+@Table(name = "user_account")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private String name = "user_" + id;
+    private String name;
     @Column
     private String email;
     @Column
