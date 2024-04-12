@@ -22,6 +22,10 @@ public class SubjectEntity {
         this.students = students;
     }
 
+    public SubjectEntity(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
     public SubjectEntity() {
 
     }

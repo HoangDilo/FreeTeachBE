@@ -1,14 +1,16 @@
 package com.example.freeteachbe.DTO.BodyPayload;
 
+import java.util.Set;
+
 public class StudentDTO {
     private int grade;
     private Long user_id;
-    private Long subject_id;
+    private Set<Long> subject_ids;
 
-    public StudentDTO(int grade, Long user_id, Long subject_id) {
+    public StudentDTO(int grade, Long user_id, Set<Long> subject_ids) {
         this.grade = grade;
         this.user_id = user_id;
-        this.subject_id = subject_id;
+        this.subject_ids = subject_ids;
     }
 
     public int getGrade() {
@@ -27,11 +29,11 @@ public class StudentDTO {
         this.user_id = user_id;
     }
 
-    public Long getSubject_id() {
-        return subject_id;
+    public Set<Long> getSubject_ids() {
+        return subject_ids;
     }
 
-    public void setSubject_id(Long subject_id) {
-        this.subject_id = subject_id;
+    public void setSubject_ids(Set<Long> subject_ids) {
+        this.subject_ids = subject_ids;
     }
 }

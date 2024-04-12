@@ -23,8 +23,7 @@ public class StudentEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 
-    public StudentEntity(Long id, int grade, Set<SubjectEntity> subjects, UserEntity user) {
-        this.id = id;
+    public StudentEntity(int grade, Set<SubjectEntity> subjects, UserEntity user) {
         this.grade = grade;
         this.subjects = subjects;
         this.user = user;
