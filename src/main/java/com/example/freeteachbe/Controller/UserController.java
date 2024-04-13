@@ -25,7 +25,7 @@ public class UserController {
         return us.createUser(userDTO);
     }
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<Message> deleteUser(@RequestParam Long id) {
+    public ResponseEntity<Message> deleteUser(@PathVariable Long id) {
         return us.deleteUser(id);
     }
 }
