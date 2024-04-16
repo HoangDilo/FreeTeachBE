@@ -13,6 +13,7 @@ public class SubjectEntity {
     private Long id;
     @Column
     private String subjectName;
+
     @ManyToMany(mappedBy = "subjects")
     private Set<StudentEntity> students;
 

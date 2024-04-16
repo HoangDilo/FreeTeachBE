@@ -26,4 +26,12 @@ public class SubjectController {
         System.out.println("controller: " + subjectTO.getSubjectName());
         return subSer.createSubject(subjectTO);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Message> editSubject(@PathVariable Long id, @RequestBody SubjectDTO subjectDTO) {
+        return subSer.editSubject(id, subjectDTO);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Message> deleteSubject(@PathVariable Long id) {
+        return subSer.deleteSubject(id);
+    }
 }
