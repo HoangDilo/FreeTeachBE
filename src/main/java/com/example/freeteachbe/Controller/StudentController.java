@@ -27,8 +27,10 @@ public class StudentController {
     public List<StudentData> getAllUser() {
         return stuSer.getAllStudent();
     }
-    @Operation(summary = "Đăng ký mới một student", description = "Tạo mới 1 student với các tham số là: " +
-            "lớp, userId, các subjectId mà student này đăng ký.")
+    @Operation(summary = "Đăng ký mới một student")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nhập vào các trường để tạo mới học sinh:" +
+            " lớp, Id của 1 người dùng, danh sách Id của các môn học " +
+            "mà học sinh muốn đăng ký cải thiện")
     @PostMapping("/register")
     public ResponseEntity<Message> createUser(@RequestBody StudentDTO studentDTO) {
         return stuSer.createStudent(studentDTO);
