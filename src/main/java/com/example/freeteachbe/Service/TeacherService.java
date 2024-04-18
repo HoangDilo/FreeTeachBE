@@ -2,6 +2,7 @@ package com.example.freeteachbe.Service;
 
 import com.example.freeteachbe.DTO.BodyPayload.TeacherDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.TeacherData;
 import com.example.freeteachbe.Entity.StudentEntity;
 import com.example.freeteachbe.Entity.SubjectEntity;
@@ -118,6 +119,16 @@ public class TeacherService {
                     teacherEntity.getActiveTimeStart().toString(),
                     teacherEntity.getActiveTimeEnd().toString(),
                     teacherEntity.getActiveDays()));
+        }
+        return ResponseEntity.status(404).body(null);
+    }
+
+    public ResponseEntity<List<SubjectData>> getTeacherSubjects(Long userId) {
+        TeacherEntity teacherEntity = _getTeacherById(userId);
+        if (teacherEntity != null) {
+            Set<SubjectEntity> subjectEntitySet = teacherEntity.getSubjects();
+            return ResponseEntity.status(200).body(subjectEntitySet.stream().map(subjectEntity ->
+                    new SubjectData(subjectEntity.getId(), subjectEntity.getSubjectName())).toList());
         }
         return ResponseEntity.status(404).body(null);
     }

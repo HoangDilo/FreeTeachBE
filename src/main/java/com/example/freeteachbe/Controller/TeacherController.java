@@ -2,6 +2,7 @@ package com.example.freeteachbe.Controller;
 
 import com.example.freeteachbe.DTO.BodyPayload.TeacherDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.TeacherData;
 import com.example.freeteachbe.Entity.TeacherEntity;
 import com.example.freeteachbe.Repository.TeacherRepository;
@@ -31,5 +32,9 @@ public class TeacherController {
     @GetMapping("/{id}")
     public ResponseEntity<TeacherData> getTeacherById(@PathVariable Long id) {
         return teacherService.getTeacherById(id);
+    }
+    @GetMapping("/{id}/subjects")
+    public ResponseEntity<List<SubjectData>> getTeacherSubjects(@PathVariable Long id) {
+        return teacherService.getTeacherSubjects(id);
     }
 }
