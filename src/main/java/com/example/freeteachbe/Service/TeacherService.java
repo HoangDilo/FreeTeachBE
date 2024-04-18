@@ -91,6 +91,8 @@ public class TeacherService {
                 LocalTime activeTimeEnd = LocalTime.parse(teacherDTO.getActiveTimeEnd());
                 TeacherEntity teacherEntity = new TeacherEntity(teacherDTO.getPricePerHour(), teacherDTO.getDescription(), activeTimeStart, activeTimeEnd, teacherDTO.getActiveDays(), subjectEntitySet, userEntity);
                 teacherRepository.save(teacherEntity);
+                userEntity.setFirstLogin(false);
+                userRepository.save(userEntity);
                 return ResponseEntity.status(200).body(new Message("Thêm mới giáo viên thành công"));
             } catch (NoSuchElementException noSuchElementException) {
                 return ResponseEntity.status(400).body(new Message("Có môn học đăng ký không tồn tại"));

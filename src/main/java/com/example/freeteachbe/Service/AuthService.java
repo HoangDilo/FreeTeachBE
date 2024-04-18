@@ -4,12 +4,14 @@ import com.example.freeteachbe.DTO.BodyPayload.LoginDTO;
 import com.example.freeteachbe.DTO.BodyPayload.RegisterDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.DataMessage;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.IsFirstLoginData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.LoginData;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalTime;
 import java.util.Optional;
@@ -31,13 +33,8 @@ public class AuthService {
         }
         if (userFound.isPresent()) {
             UserEntity user = userFound.get();
-            boolean isFirstLogin = user.isFirstLogin();
-            if (user.isFirstLogin()) {
-                user.setFirstLogin(false);
-                ur.save(user);
-            }
             if (user.getPassword().equals(password)) {
-                LoginData loginData = new LoginData(user.getId(), isFirstLogin);
+                LoginData loginData = new LoginData(user.getId(), user.isFirstLogin());
                 return ResponseEntity.status(200).body(new DataMessage<LoginData>("Đăng nhập thành công", loginData));
             }
         }
@@ -68,5 +65,13 @@ public class AuthService {
         UserEntity user = new UserEntity("user_" + time.toString(), email, "", username, password);
         ur.save(user);
         return ResponseEntity.status(200).body(new Message("Đăng ký người dùng thành công"));
+    }
+
+    public ResponseEntity<IsFirstLoginData> getIsFirstLogin (@PathVariable Long id) {
+        Optional<UserEntity> userEntityOptional = ur.findById(id);
+        if (userEntityOptional.isPresent()) {
+            return ResponseEntity.status(200).body(new IsFirstLoginData(userEntityOptional.get().isFirstLogin()));
+        }
+        return ResponseEntity.status(404).body(null);
     }
 }

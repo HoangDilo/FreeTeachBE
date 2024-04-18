@@ -66,6 +66,8 @@ public class StudentService {
                         subRe.findById(subject).get()).collect(Collectors.toSet());
                 StudentEntity student = new StudentEntity(studentDTO.getGrade(), subjectEntitySet, user);
                 sr.save(student);
+                user.setFirstLogin(false);
+                ur.save(user);
                 return ResponseEntity.status(200).body(new Message("Thành công"));
             } catch (NoSuchElementException noSuchElementException) {
                 return ResponseEntity.status(400).body(new Message("Có môn học đăng ký không tồn tại"));
