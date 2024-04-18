@@ -16,6 +16,8 @@ public class SubjectEntity {
 
     @ManyToMany(mappedBy = "subjects")
     private Set<StudentEntity> students;
+    @ManyToMany(mappedBy = "subjects")
+    private Set<TeacherEntity> teachers;
 
     public SubjectEntity(Long id, String subjectName, Set<StudentEntity> students) {
         this.id = id;
