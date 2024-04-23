@@ -74,4 +74,9 @@ public class AuthService {
         }
         return ResponseEntity.status(404).body(null);
     }
+
+    public boolean checkAuthorization(Long userId) {
+        Optional<UserEntity> userEntityOptional = ur.findById(userId);
+        return userEntityOptional.isPresent();
+    }
 }

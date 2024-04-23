@@ -16,7 +16,7 @@ public class UserEntity {
     private String name;
     @Column
     private String email;
-    @Column
+    @Column(length = 500)
     private String avatarURL;
     @Column
     private String username;
