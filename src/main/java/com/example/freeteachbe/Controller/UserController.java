@@ -2,6 +2,7 @@ package com.example.freeteachbe.Controller;
 
 import com.example.freeteachbe.DTO.BodyPayload.UserDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.RoleData;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,5 +35,12 @@ public class UserController {
     @Parameter(name = "id", description = "Nhập vào id của user muốn xóa")
     public ResponseEntity<Message> deleteUser(@PathVariable Long id) {
         return us.deleteUser(id);
+    }
+    @GetMapping("/user/{id}/role")
+    @Operation(summary = "Lấy ra vai trò của một user", description = "Giá trị: \"student\": học sinh " +
+            "| \"teacher\": gia sư " +
+            "| \"null\": chưa đăng ký vai trò")
+    public  ResponseEntity<RoleData> checkUserRole(@PathVariable Long id) {
+        return us.checkUserRole(id);
     }
 }
