@@ -6,6 +6,7 @@ import com.example.freeteachbe.DTO.ReturnPayload.DataMessage;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.IsFirstLoginData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.LoginData;
+import com.example.freeteachbe.Entity.Role;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -31,6 +33,7 @@ public class AuthService {
     private UserRepository ur;
 
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<Message> login(LoginDTO loginDTO) {
         String username = loginDTO.getUsername();
@@ -79,7 +82,13 @@ public class AuthService {
             return ResponseEntity.status(400).body(new Message("Mật khẩu nhập lại không khớp"));
         }
         LocalTime time = LocalTime.now();
-        UserEntity user = new UserEntity("user_" + time.toString(), email, "", username, password);
+        UserEntity user = new UserEntity(
+                "user_" + time.toString(),
+                email,
+                "",
+                username,
+                passwordEncoder.encode(password),
+                null); //to do: check role
         ur.save(user);
         return ResponseEntity.status(200).body(new Message("Đăng ký người dùng thành công"));
     }

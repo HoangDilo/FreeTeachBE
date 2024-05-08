@@ -1,18 +1,22 @@
 package com.example.freeteachbe.DTO.BodyPayload;
 
+import com.example.freeteachbe.Entity.Role;
+
 public class UserDTO {
     private String name;
     private String email;
     private String avatarURL;
     private String username;
     private String password;
+    private Role role;
 
-    public UserDTO(String name, String email, String avatarURL, String username, String password, int money) {
+    public UserDTO(String name, String email, String avatarURL, String username, String password, Role role) {
         this.name = name;
         this.email = email;
         this.avatarURL = avatarURL;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public String getName() {
@@ -54,5 +58,12 @@ public class UserDTO {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }

@@ -8,11 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-enum Role {
-    TEACHER,
-    STUDENT
-}
-
 @Entity
 @Table(name = "user_account")
 @Data
@@ -38,12 +33,13 @@ public class UserEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public UserEntity(String name, String email, String avatarURL, String username, String password) {
+    public UserEntity(String name, String email, String avatarURL, String username, String password, Role role) {
         this.name = name;
         this.email = email;
         this.avatarURL = avatarURL;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
     public UserEntity(Long id, String name, String email, String avatarURL, String username, String password, int money) {
