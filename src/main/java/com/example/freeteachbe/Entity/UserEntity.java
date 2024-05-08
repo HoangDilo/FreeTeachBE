@@ -1,14 +1,22 @@
 package com.example.freeteachbe.Entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.IdGeneratorType;
-
-import java.util.ArrayList;
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
 import java.util.List;
+
+enum Role {
+    TEACHER,
+    STUDENT
+}
 
 @Entity
 @Table(name = "user_account")
-public class UserEntity {
+@Data
+public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +34,9 @@ public class UserEntity {
     private int money = 0;
     @Column
     private boolean isFirstLogin = true;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public UserEntity(String name, String email, String avatarURL, String username, String password) {
         this.name = name;
@@ -45,71 +56,33 @@ public class UserEntity {
         this.money = money;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAvatarURL() {
-        return avatarURL;
-    }
-
-    public void setAvatarURL(String avatarURL) {
-        this.avatarURL = avatarURL;
-    }
-
-    public int getMoney() {
-        return money;
-    }
-
-    public void setMoney(int money) {
-        this.money = money;
-    }
-
     public UserEntity() {
 
     }
 
-    public Long getId() {
-        return id;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getUsername() {
-        return username;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean isFirstLogin() {
-        return isFirstLogin;
-    }
-
-    public void setFirstLogin(boolean firstLogin) {
-        isFirstLogin = firstLogin;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
