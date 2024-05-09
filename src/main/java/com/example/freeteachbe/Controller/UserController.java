@@ -1,6 +1,7 @@
 package com.example.freeteachbe.Controller;
 
 import com.example.freeteachbe.DTO.BodyPayload.ChangeAvatarDTO;
+import com.example.freeteachbe.DTO.BodyPayload.ChangeNameDTO;
 import com.example.freeteachbe.DTO.BodyPayload.ChangePasswordDTO;
 import com.example.freeteachbe.DTO.BodyPayload.UserDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
@@ -69,5 +70,13 @@ public class UserController {
             @AuthenticationPrincipal UserEntity userEntity,
             @RequestBody ChangeAvatarDTO avatarDTO) {
         return ResponseEntity.ok(us.changeAvatar(userEntity, avatarDTO.getNew_avatar_url()));
+    }
+
+    @PutMapping("/change-display-name")
+    public ResponseEntity<Message> changeDisplayName(
+            @AuthenticationPrincipal UserEntity userEntity,
+            @RequestBody ChangeNameDTO nameDTO
+            ) {
+        return ResponseEntity.ok(us.changeDisplayName(userEntity, nameDTO.getName()));
     }
 }

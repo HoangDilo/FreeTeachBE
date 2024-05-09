@@ -10,4 +10,4 @@ spring.datasource.username=postgres
 spring.datasource.password=hoangdilo1412postgres
 spring.datasource.driver-class-name=org.postgresql.Driver
 
-token.secret=aHnHeaodkngDel14do12QuuSAdEPT124555aikkk
+token.secret=aHnHeaodkngDel14do12QuuSAdEPT124555aikkkV41C4Daa

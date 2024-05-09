@@ -83,4 +83,10 @@ public class UserService {
         ur.save(userEntity);
         return new Message("Đổi avatar thành công");
     }
+
+    public Message changeDisplayName(UserEntity userEntity, String name) {
+        userEntity.setName(name);
+        ur.save(userEntity);
+        return new Message("Đổi tên hiển thị thành công");
+    }
 }
