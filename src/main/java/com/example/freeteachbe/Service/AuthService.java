@@ -15,13 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import javax.swing.text.html.Option;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Optional;
@@ -34,6 +32,7 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public ResponseEntity<Message> login(LoginDTO loginDTO) {
         String username = loginDTO.getUsername();
@@ -44,20 +43,23 @@ public class AuthService {
         if (password.isEmpty()) {
             return ResponseEntity.status(400).body(new Message("Mật khẩu không được để trống"));
         }
-        Optional<UserEntity> userEntityOptional = ur.findByUsername(loginDTO.getUsername());
-        if (userEntityOptional.isPresent()) {
-            UserEntity user = userEntityOptional.get();
-            if (user.getPassword().equals(password)) {
-                HashMap<String, Object> extraClaims = new HashMap<>();
-                extraClaims.put("id", user.getId());
-                String jwt = jwtService.generateToken(extraClaims, user);
-                return ResponseEntity.ok(new DataMessage<>("Đăng nhập thành công", LoginData.builder()
-                        .is_first_login(user.isFirstLogin())
-                        .access_token(jwt)
-                        .build())) ;
-            }
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            UserEntity userEntity = ur.findByUsername(username).orElseThrow(() ->
+                    new UsernameNotFoundException("Không ti thấy người dùng này"));
+            HashMap<String, Object> extraClaims = new HashMap<>();
+            extraClaims.put("id", userEntity.getId());
+            String jwt = jwtService.generateToken(extraClaims, userEntity);
+            return ResponseEntity.status(200).body(new DataMessage<LoginData>(
+                    "Đăng nhập thành công",
+                    LoginData
+                            .builder()
+                            .access_token(jwt)
+                            .is_first_login(userEntity.isFirstLogin())
+                            .build()));
+        } catch (AuthenticationException authenticationException) {
+            return ResponseEntity.status(400).body(new Message("Tên người dùng hoặc mật khẩu sai"));
         }
-        return ResponseEntity.status(404).body(new Message("Không tìm thấy người dùng này"));
     }
 
     public ResponseEntity<Message> register(RegisterDTO registerDTO) {
@@ -88,7 +90,7 @@ public class AuthService {
                 "",
                 username,
                 passwordEncoder.encode(password),
-                null); //to do: check role
+                Role.ANONYMOUS); //to do: check role
         ur.save(user);
         return ResponseEntity.status(200).body(new Message("Đăng ký người dùng thành công"));
     }
