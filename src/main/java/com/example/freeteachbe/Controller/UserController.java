@@ -54,12 +54,11 @@ public class UserController {
         return us.checkUserRole(userEntity.getId());
     }
 
-    @PutMapping("/user/{id}/change-password")
+    @PutMapping("/user/change-password")
     @Operation(summary = "Đổi mật khẩu của 1 người dùng")
-    public ResponseEntity<Message> changePassword(@RequestHeader("authorization_fake") String authorization, @PathVariable Long id, @RequestBody ChangePasswordDTO changePasswordDTO) {
-        if (authService.checkAuthorization(Long.parseLong(authorization))) {
-            return us.changePassword(id, changePasswordDTO.getOld_password(), changePasswordDTO.getNew_password());
-        }
-        return ResponseEntity.status(401).body(null);
+    public ResponseEntity<Message> changePassword(
+            @AuthenticationPrincipal UserEntity userEntity,
+            @RequestBody ChangePasswordDTO changePasswordDTO) {
+        return us.changePassword(userEntity, changePasswordDTO.getOld_password(), changePasswordDTO.getNew_password());
     }
 }

@@ -94,9 +94,4 @@ public class AuthService {
         ur.save(user);
         return ResponseEntity.status(200).body(new Message("Đăng ký người dùng thành công"));
     }
-
-    public boolean checkAuthorization(Long userId) {
-        Optional<UserEntity> userEntityOptional = ur.findById(userId);
-        return userEntityOptional.isPresent();
-    }
 }

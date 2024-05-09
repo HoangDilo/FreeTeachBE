@@ -10,6 +10,7 @@ import com.example.freeteachbe.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public class UserService {
     StudentRepository sr;
     @Autowired
     TeacherRepository tr;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public List<UserEntity> getAllUser() {
         return ur.findAll(Sort.by(Sort.Direction.ASC, "id"));
@@ -63,21 +66,17 @@ public class UserService {
         return ResponseEntity.status(404).body(null);
     }
 
-    public ResponseEntity<Message> changePassword(Long id, String oldPass, String newPass) {
-        Optional<UserEntity> userEntityOptional = ur.findById(id);
-        if (userEntityOptional.isPresent()) {
-            UserEntity userEntity = userEntityOptional.get();
-            if (oldPass.equals(userEntity.getPassword())) {
+    public ResponseEntity<Message> changePassword(UserEntity userEntity, String oldPass, String newPass) {
+
+            if (passwordEncoder.matches(oldPass, userEntity.getPassword())) {
                 if (!oldPass.equals(newPass)) {
-                    userEntity.setPassword(newPass);
+                    userEntity.setPassword(passwordEncoder.encode(newPass));
                     ur.save(userEntity);
                     return ResponseEntity.status(200).body(new Message("Đổi mật khẩu thành công"));
                 }
                 return ResponseEntity.status(400).body(new Message("Mật khẩu mới không được trùng với mật khẩu cũ"));
             }
             return ResponseEntity.status(400).body(new Message("Mật khẩu không đúng"));
-        }
-        return ResponseEntity.status(404).body(new Message("Không tìm thấy người dùng này"));
     }
 
 //    public ResponseEntity<Message> changeAvatar(Long id, String avatar_url) {
