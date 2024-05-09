@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,12 +46,12 @@ public class UserController {
         return us.deleteUser(id);
     }
 
-    @GetMapping("/user/{id}/role")
+    @GetMapping("/user/role")
     @Operation(summary = "Lấy ra vai trò của một user", description = "Giá trị: \"student\": học sinh " +
             "| \"teacher\": gia sư " +
             "| \"null\": chưa đăng ký vai trò")
-    public  ResponseEntity<RoleData> checkUserRole(@PathVariable Long id) {
-        return us.checkUserRole(id);
+    public  ResponseEntity<RoleData> checkUserRole(@AuthenticationPrincipal UserEntity userEntity) {
+        return us.checkUserRole(userEntity.getId());
     }
 
     @PutMapping("/user/{id}/change-password")

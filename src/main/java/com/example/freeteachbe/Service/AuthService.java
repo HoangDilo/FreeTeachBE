@@ -95,14 +95,6 @@ public class AuthService {
         return ResponseEntity.status(200).body(new Message("Đăng ký người dùng thành công"));
     }
 
-    public ResponseEntity<IsFirstLoginData> getIsFirstLogin(@PathVariable Long id) {
-        Optional<UserEntity> userEntityOptional = ur.findById(id);
-        if (userEntityOptional.isPresent()) {
-            return ResponseEntity.status(200).body(new IsFirstLoginData(userEntityOptional.get().isFirstLogin()));
-        }
-        return ResponseEntity.status(404).body(null);
-    }
-
     public boolean checkAuthorization(Long userId) {
         Optional<UserEntity> userEntityOptional = ur.findById(userId);
         return userEntityOptional.isPresent();

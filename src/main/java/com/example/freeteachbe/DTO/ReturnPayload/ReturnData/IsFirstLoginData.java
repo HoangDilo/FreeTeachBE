@@ -1,17 +1,17 @@
 package com.example.freeteachbe.DTO.ReturnPayload.ReturnData;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class IsFirstLoginData {
-    private boolean isFirstLogin;
+    @JsonProperty("is_first_login")
+    private boolean is_first_login;
 
-    public IsFirstLoginData(boolean isFirstLogin) {
-        this.isFirstLogin = isFirstLogin;
-    }
-
-    public boolean isFirstLogin() {
-        return isFirstLogin;
-    }
-
-    public void setFirstLogin(boolean firstLogin) {
-        isFirstLogin = firstLogin;
-    }
 }

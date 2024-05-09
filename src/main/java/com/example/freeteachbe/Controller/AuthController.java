@@ -4,13 +4,13 @@ import com.example.freeteachbe.DTO.BodyPayload.LoginDTO;
 import com.example.freeteachbe.DTO.BodyPayload.RegisterDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.IsFirstLoginData;
-import com.example.freeteachbe.Repository.UserRepository;
+import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,12 +33,11 @@ public class AuthController {
     public ResponseEntity<Message> register(@RequestBody RegisterDTO registerDTO) {
         return authService.register(registerDTO);
     }
-    @GetMapping("{id}/check-first-login")
+    @GetMapping("/check-first-login")
     @Operation(summary = "Kiểm tra một user xem đã đăng ký làm học sinh hoặc gia sư hay chưa",
     description = "Giá trị tham chiếu: true - người dùng chưa đăng ký làm học sinh hoặc gia sư | " +
             "false - người dùng đã đăng ký làm học sinh hoặc gia sư")
-    @Parameter(name = "id", description = "Nhập vào Id của người dùng muốn check")
-    public ResponseEntity<IsFirstLoginData> getIsFirstLogin (@PathVariable Long id) {
-        return authService.getIsFirstLogin(id);
+    public ResponseEntity<IsFirstLoginData> getIsFirstLogin (@AuthenticationPrincipal UserEntity userEntity) {
+        return ResponseEntity.status(200).body(new IsFirstLoginData(userEntity.isFirstLogin()));
     }
 }
