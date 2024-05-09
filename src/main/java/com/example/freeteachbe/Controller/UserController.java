@@ -1,5 +1,6 @@
 package com.example.freeteachbe.Controller;
 
+import com.example.freeteachbe.DTO.BodyPayload.ChangeAvatarDTO;
 import com.example.freeteachbe.DTO.BodyPayload.ChangePasswordDTO;
 import com.example.freeteachbe.DTO.BodyPayload.UserDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
@@ -20,33 +21,34 @@ import java.util.List;
 
 @RestController
 @Tag(name = "User")
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService us;
     @Autowired
     private AuthService authService;
 
-    @GetMapping("/user")
+    @GetMapping()
     @Operation(summary = "(DEV) Lấy ra danh sách các user")
     public List<UserEntity> testUsers() {
         return us.getAllUser();
     }
 
-    @PostMapping("/user/create")
+    @PostMapping("/create")
     @Operation(summary = "(DEV) Tạo mới một user")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nhập vào các trường thông tin cho 1 user")
     public ResponseEntity<Message> createUser(@RequestBody UserDTO userDTO) {
         return us.createUser(userDTO);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Xóa một user bằng id")
     @Parameter(name = "id", description = "Nhập vào id của user muốn xóa")
     public ResponseEntity<Message> deleteUser(@PathVariable Long id) {
         return us.deleteUser(id);
     }
 
-    @GetMapping("/user/role")
+    @GetMapping("/role")
     @Operation(summary = "Lấy ra vai trò của một user", description = "Giá trị: \"student\": học sinh " +
             "| \"teacher\": gia sư " +
             "| \"null\": chưa đăng ký vai trò")
@@ -54,11 +56,18 @@ public class UserController {
         return us.checkUserRole(userEntity.getId());
     }
 
-    @PutMapping("/user/change-password")
+    @PutMapping("/change-password")
     @Operation(summary = "Đổi mật khẩu của 1 người dùng")
     public ResponseEntity<Message> changePassword(
             @AuthenticationPrincipal UserEntity userEntity,
             @RequestBody ChangePasswordDTO changePasswordDTO) {
         return us.changePassword(userEntity, changePasswordDTO.getOld_password(), changePasswordDTO.getNew_password());
+    }
+
+    @PutMapping("/change-avatar")
+    public ResponseEntity<Message> changeAvatar(
+            @AuthenticationPrincipal UserEntity userEntity,
+            @RequestBody ChangeAvatarDTO avatarDTO) {
+        return ResponseEntity.ok(us.changeAvatar(userEntity, avatarDTO.getNew_avatar_url()));
     }
 }

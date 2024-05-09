@@ -67,7 +67,6 @@ public class UserService {
     }
 
     public ResponseEntity<Message> changePassword(UserEntity userEntity, String oldPass, String newPass) {
-
             if (passwordEncoder.matches(oldPass, userEntity.getPassword())) {
                 if (!oldPass.equals(newPass)) {
                     userEntity.setPassword(passwordEncoder.encode(newPass));
@@ -79,7 +78,9 @@ public class UserService {
             return ResponseEntity.status(400).body(new Message("Mật khẩu không đúng"));
     }
 
-//    public ResponseEntity<Message> changeAvatar(Long id, String avatar_url) {
-//
-//    }
+    public Message changeAvatar(UserEntity userEntity, String avatar_url) {
+        userEntity.setAvatarURL(avatar_url);
+        ur.save(userEntity);
+        return new Message("Đổi avatar thành công");
+    }
 }
