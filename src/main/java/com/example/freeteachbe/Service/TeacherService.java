@@ -50,18 +50,6 @@ public class TeacherService {
         }).toList();
     }
 
-    public TeacherEntity _getTeacherById(Long userId) {
-        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
-        if (userEntityOptional.isPresent()) {
-            UserEntity userEntity = userEntityOptional.get();
-            Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(userEntity);
-            if (teacherEntityOptional.isPresent()) {
-                return teacherEntityOptional.get();
-            }
-        }
-        return null;
-    }
-
     public ResponseEntity<Message> registerTeacher(UserEntity user, TeacherDTO teacherDTO) {
         if (user.isFirstLogin()) {
             try {
@@ -81,7 +69,17 @@ public class TeacherService {
         }
         return ResponseEntity.status(400).body(new Message("Bạn đã đăng ký làm học sinh hoặc gia sư rồi"));
     }
-
+    private TeacherEntity _getTeacherById(Long userId) {
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(userEntity);
+            if (teacherEntityOptional.isPresent()) {
+                return teacherEntityOptional.get();
+            }
+        }
+        return null;
+    }
     public ResponseEntity<TeacherData> getTeacherById(Long id) {
         TeacherEntity teacherEntity = _getTeacherById(id);
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
@@ -103,9 +101,10 @@ public class TeacherService {
         return ResponseEntity.status(404).body(null);
     }
 
-    public ResponseEntity<List<SubjectData>> getTeacherSubjects(Long userId) {
-        TeacherEntity teacherEntity = _getTeacherById(userId);
-        if (teacherEntity != null) {
+    public ResponseEntity<List<SubjectData>> getTeacherSubjects(UserEntity user) {
+        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(user);
+        if (teacherEntityOptional.isPresent()) {
+            TeacherEntity teacherEntity = teacherEntityOptional.get();
             Set<SubjectEntity> subjectEntitySet = teacherEntity.getSubjects();
             return ResponseEntity.status(200).body(subjectEntitySet.stream().map(subjectEntity ->
                     new SubjectData(subjectEntity.getId(), subjectEntity.getSubjectName())).toList());

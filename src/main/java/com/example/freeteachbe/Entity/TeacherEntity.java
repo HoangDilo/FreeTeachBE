@@ -32,6 +32,9 @@ public class TeacherEntity {
             inverseJoinColumns = @JoinColumn(name = "subject_id"))
     @Column
     private Set<SubjectEntity> subjects;
+    @Column
+    @OneToMany(mappedBy = "teacher")
+    private Set<DocumentPostEntity> documentPosts;
 
     public TeacherEntity(int pricePerHour, String description, LocalTime activeTimeStart, LocalTime activeTimeEnd, String activeDays, Set<SubjectEntity> subjects, UserEntity user) {
         this.pricePerHour = pricePerHour;
@@ -57,6 +60,14 @@ public class TeacherEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public Set<DocumentPostEntity> getDocumentPosts() {
+        return documentPosts;
+    }
+
+    public void setDocumentPosts(Set<DocumentPostEntity> documentPosts) {
+        this.documentPosts = documentPosts;
     }
 
     public void setId(Long id) {

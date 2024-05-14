@@ -18,6 +18,8 @@ public class SubjectEntity {
     private Set<StudentEntity> students;
     @ManyToMany(mappedBy = "subjects")
     private Set<TeacherEntity> teachers;
+    @OneToMany(mappedBy = "subject")
+    private Set<DocumentPostEntity> documentPosts;
 
     public SubjectEntity(Long id, String subjectName, Set<StudentEntity> students) {
         this.id = id;
@@ -35,6 +37,14 @@ public class SubjectEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public Set<TeacherEntity> getTeachers() {
+        return teachers;
+    }
+
+    public void setTeachers(Set<TeacherEntity> teachers) {
+        this.teachers = teachers;
     }
 
     public void setId(Long id) {

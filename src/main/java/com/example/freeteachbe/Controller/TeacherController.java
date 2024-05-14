@@ -24,11 +24,13 @@ import java.util.List;
 public class TeacherController {
     @Autowired
     private TeacherService teacherService;
+
     @GetMapping
     @Operation(summary = "Lấy ra danh sách các gia sư của hệ thống")
     public List<TeacherData> getAllTeacher() {
         return teacherService.getAllTeacher();
     }
+
     @PostMapping("/register")
     @Operation(summary = "Đăng ký một gia sư mới")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nhập vào các trường để đăng ký " +
@@ -47,10 +49,10 @@ public class TeacherController {
     public ResponseEntity<TeacherData> getTeacherById(@PathVariable Long id) {
         return teacherService.getTeacherById(id);
     }
-    @GetMapping("/{id}/subjects")
+
+    @GetMapping("/subjects")
     @Operation(summary = "Lấy ra danh sách câc môn học chuyên môn của một gia sư")
-    @Parameter(name = "id", description = "Nhập vào user id của 1 gia sư")
-    public ResponseEntity<List<SubjectData>> getTeacherSubjects(@PathVariable Long id) {
-        return teacherService.getTeacherSubjects(id);
+    public ResponseEntity<List<SubjectData>> getTeacherSubjects(@AuthenticationPrincipal UserEntity user) {
+        return teacherService.getTeacherSubjects(user);
     }
 }
