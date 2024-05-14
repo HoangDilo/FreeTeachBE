@@ -89,4 +89,10 @@ public class UserService {
         ur.save(userEntity);
         return new Message("Đổi tên hiển thị thành công");
     }
+
+    public Message changeEmail(UserEntity user, String email) {
+        user.setEmail(email);
+        ur.save(user);
+        return new Message("Đôi email thành công");
+    }
 }

@@ -9,7 +9,6 @@ public class TeacherDTO {
     private String activeTimeStart;
     private String activeTimeEnd;
     private String activeDays;
-    private Long userId;
     private Set<Long> subjectIds;
 
     public int getPricePerHour() {
@@ -52,13 +51,6 @@ public class TeacherDTO {
         this.activeDays = activeDays;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public Set<Long> getSubjectIds() {
         return subjectIds;
@@ -74,7 +66,6 @@ public class TeacherDTO {
         this.activeTimeStart = activeTimeStart;
         this.activeTimeEnd = activeTimeEnd;
         this.activeDays = activeDays;
-        this.userId = userId;
         this.subjectIds = subjectIds;
     }
 }

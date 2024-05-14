@@ -4,12 +4,14 @@ import com.example.freeteachbe.DTO.BodyPayload.StudentDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.StudentData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
+import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,8 +34,10 @@ public class StudentController {
             " lớp, Id của 1 người dùng, danh sách Id của các môn học " +
             "mà học sinh muốn đăng ký cải thiện")
     @PostMapping("/register")
-    public ResponseEntity<Message> createUser(@RequestBody StudentDTO studentDTO) {
-        return stuSer.createStudent(studentDTO);
+    public ResponseEntity<Message> createUser(
+            @AuthenticationPrincipal UserEntity user,
+            @RequestBody StudentDTO studentDTO) {
+        return stuSer.createStudent(user, studentDTO);
     }
     @Operation(summary = "Lấy ra một student theo id")
     @Parameter(name = "id", description = "Truyền vào userId mà student này tham chiếu tới")

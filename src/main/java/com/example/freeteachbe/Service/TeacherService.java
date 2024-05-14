@@ -4,11 +4,10 @@ import com.example.freeteachbe.DTO.BodyPayload.TeacherDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.TeacherData;
-import com.example.freeteachbe.Entity.StudentEntity;
+import com.example.freeteachbe.Entity.Role;
 import com.example.freeteachbe.Entity.SubjectEntity;
 import com.example.freeteachbe.Entity.TeacherEntity;
 import com.example.freeteachbe.Entity.UserEntity;
-import com.example.freeteachbe.Repository.StudentRepository;
 import com.example.freeteachbe.Repository.SubjectRepository;
 import com.example.freeteachbe.Repository.TeacherRepository;
 import com.example.freeteachbe.Repository.UserRepository;
@@ -32,8 +31,6 @@ public class TeacherService {
     UserRepository userRepository;
     @Autowired
     SubjectRepository subjectRepository;
-    @Autowired
-    StudentRepository studentRepository;
 
     public List<TeacherData> getAllTeacher() {
         List<TeacherEntity> teacherEntityList = teacherRepository.findAll();
@@ -65,43 +62,24 @@ public class TeacherService {
         return null;
     }
 
-    private StudentEntity checkViolationStudent(Long userId) {
-        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
-        if (userEntityOptional.isPresent()) {
-            UserEntity user = userEntityOptional.get();
-            Optional<StudentEntity> studentEntityOptional = studentRepository.findByUser(user);
-            if (studentEntityOptional.isPresent()) {
-                return studentEntityOptional.get();
-            }
-        }
-        return null;
-    }
-
-    public ResponseEntity<Message> registerTeacher(TeacherDTO teacherDTO) {
-        Optional<UserEntity> userEntityOptional = userRepository.findById(teacherDTO.getUserId());
-        if (userEntityOptional.isPresent()) {
-            UserEntity userEntity = userEntityOptional.get();
+    public ResponseEntity<Message> registerTeacher(UserEntity user, TeacherDTO teacherDTO) {
+        if (user.isFirstLogin()) {
             try {
-                if (checkViolationStudent(teacherDTO.getUserId()) != null) {
-                    throw new DataIntegrityViolationException("");
-                }
                 Set<SubjectEntity> subjectEntitySet = teacherDTO.getSubjectIds().stream().map(subject ->
                         subjectRepository.findById(subject).get()).collect(Collectors.toSet());
                 LocalTime activeTimeStart = LocalTime.parse(teacherDTO.getActiveTimeStart());
                 LocalTime activeTimeEnd = LocalTime.parse(teacherDTO.getActiveTimeEnd());
-                TeacherEntity teacherEntity = new TeacherEntity(teacherDTO.getPricePerHour(), teacherDTO.getDescription(), activeTimeStart, activeTimeEnd, teacherDTO.getActiveDays(), subjectEntitySet, userEntity);
+                TeacherEntity teacherEntity = new TeacherEntity(teacherDTO.getPricePerHour(), teacherDTO.getDescription(), activeTimeStart, activeTimeEnd, teacherDTO.getActiveDays(), subjectEntitySet, user);
                 teacherRepository.save(teacherEntity);
-                userEntity.setFirstLogin(false);
-                userRepository.save(userEntity);
+                user.setFirstLogin(false);
+                user.setRole(Role.TEACHER);
+                userRepository.save(user);
                 return ResponseEntity.status(200).body(new Message("Thêm mới giáo viên thành công"));
             } catch (NoSuchElementException noSuchElementException) {
                 return ResponseEntity.status(400).body(new Message("Có môn học đăng ký không tồn tại"));
-            } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-                return ResponseEntity.status(400).body(new Message("Người dùng này đã được đăng ký"));
             }
-        } else {
-            return ResponseEntity.status(404).body(new Message("Không tìm thấy người dùng này"));
         }
+        return ResponseEntity.status(400).body(new Message("Bạn đã đăng ký làm học sinh hoặc gia sư rồi"));
     }
 
     public ResponseEntity<TeacherData> getTeacherById(Long id) {

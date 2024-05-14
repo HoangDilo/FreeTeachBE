@@ -4,16 +4,14 @@ import com.example.freeteachbe.DTO.BodyPayload.StudentDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.StudentData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
+import com.example.freeteachbe.Entity.Role;
 import com.example.freeteachbe.Entity.StudentEntity;
 import com.example.freeteachbe.Entity.SubjectEntity;
-import com.example.freeteachbe.Entity.TeacherEntity;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.StudentRepository;
 import com.example.freeteachbe.Repository.SubjectRepository;
-import com.example.freeteachbe.Repository.TeacherRepository;
 import com.example.freeteachbe.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +29,6 @@ public class StudentService {
     private UserRepository ur;
     @Autowired
     private SubjectRepository subRe;
-    @Autowired
-    private TeacherRepository teacherRepository;
 
     public List<StudentData> getAllStudent() {
         List<StudentEntity> studentEntities = sr.findAll();
@@ -42,41 +38,23 @@ public class StudentService {
         }).toList();
     }
 
-    private TeacherEntity checkTeacherViolation(Long userId) {
-        Optional<UserEntity> userEntityOptional = ur.findById(userId);
-        if (userEntityOptional.isPresent()) {
-            UserEntity userEntity = userEntityOptional.get();
-            Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(userEntity);
-            if (teacherEntityOptional.isPresent()) {
-                return teacherEntityOptional.get();
-            }
-        }
-        return null;
-    }
-
-    public ResponseEntity<Message> createStudent(StudentDTO studentDTO) {
-        Optional<UserEntity> userFound = ur.findById(studentDTO.getUser_id());
-        if (userFound.isPresent()) {
-            UserEntity user = userFound.get();
+    public ResponseEntity<Message> createStudent(UserEntity user, StudentDTO studentDTO) {
+        if (user.isFirstLogin()) {
             try {
-                if (checkTeacherViolation(studentDTO.getUser_id()) != null) {
-                    throw new DataIntegrityViolationException("");
-                }
+
                 Set<SubjectEntity> subjectEntitySet = studentDTO.getSubject_ids().stream().map(subject ->
                         subRe.findById(subject).get()).collect(Collectors.toSet());
                 StudentEntity student = new StudentEntity(studentDTO.getGrade(), subjectEntitySet, user);
                 sr.save(student);
                 user.setFirstLogin(false);
+                user.setRole(Role.STUDENT);
                 ur.save(user);
                 return ResponseEntity.status(200).body(new Message("Thành công"));
             } catch (NoSuchElementException noSuchElementException) {
                 return ResponseEntity.status(400).body(new Message("Có môn học đăng ký không tồn tại"));
-            } catch (DataIntegrityViolationException dataIntegrityViolationException) {
-                return ResponseEntity.status(400).body(new Message("Người dùng này đã được đăng ký"));
             }
-        } else {
-            return ResponseEntity.status(404).body(new Message("Không tìm thấy người dùng này"));
         }
+        return ResponseEntity.status(400).body(new Message("Bạn đã đăng ký làm học sinh hoặc gia sư rồi"));
     }
 
     public StudentEntity _getStudentById(Long userId) {

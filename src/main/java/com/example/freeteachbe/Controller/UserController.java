@@ -1,11 +1,9 @@
 package com.example.freeteachbe.Controller;
 
-import com.example.freeteachbe.DTO.BodyPayload.ChangeAvatarDTO;
-import com.example.freeteachbe.DTO.BodyPayload.ChangeNameDTO;
-import com.example.freeteachbe.DTO.BodyPayload.ChangePasswordDTO;
-import com.example.freeteachbe.DTO.BodyPayload.UserDTO;
+import com.example.freeteachbe.DTO.BodyPayload.*;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.RoleData;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.UserInfoData;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Service.AuthService;
 import com.example.freeteachbe.Service.UserService;
@@ -78,5 +76,20 @@ public class UserController {
             @RequestBody ChangeNameDTO nameDTO
             ) {
         return ResponseEntity.ok(us.changeDisplayName(userEntity, nameDTO.getName()));
+    }
+
+    @PutMapping("/change-email")
+    public ResponseEntity<Message> changeEmail(
+            @AuthenticationPrincipal UserEntity userEntity,
+            @RequestBody ChangeEmailDTO emailDTO
+            ) {
+        return ResponseEntity.ok(us.changeEmail(userEntity, emailDTO.getEmail()));
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<UserInfoData> getMyInfo(
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        return null;
     }
 }
