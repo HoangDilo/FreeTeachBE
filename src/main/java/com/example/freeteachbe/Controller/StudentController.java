@@ -51,4 +51,9 @@ public class StudentController {
     public ResponseEntity<Set<SubjectData>> getStudentSubjects(@PathVariable Long id) {
         return stuSer.getStudentSubjects(id);
     }
+
+    @GetMapping("/my/post")
+    public String getPost() {
+        return "concac";
+    }
 }

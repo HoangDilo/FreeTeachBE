@@ -62,7 +62,7 @@ public class TeacherService {
                 user.setFirstLogin(false);
                 user.setRole(Role.TEACHER);
                 userRepository.save(user);
-                return ResponseEntity.status(200).body(new Message("Thêm mới giáo viên thành công"));
+                return ResponseEntity.status(200).body(new Message("Đăng ký giáo viên thành công"));
             } catch (NoSuchElementException noSuchElementException) {
                 return ResponseEntity.status(400).body(new Message("Có môn học đăng ký không tồn tại"));
             }

@@ -1,6 +1,8 @@
 package com.example.freeteachbe.Configuartion;
 
+import com.example.freeteachbe.Entity.Role;
 import lombok.RequiredArgsConstructor;
+import org.apache.juli.logging.Log;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth
+                                .requestMatchers("/teacher/**")
+                                .hasRole("TEACHER")
+                                .requestMatchers("/student/my/**")
+                                .hasRole("STUDENT")
                                 .requestMatchers("/auth/login",
                                         "/auth/register",
                                         "/swagger",

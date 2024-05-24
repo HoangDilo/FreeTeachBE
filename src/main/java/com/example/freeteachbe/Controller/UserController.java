@@ -33,13 +33,6 @@ public class UserController {
         return us.getAllUser();
     }
 
-    @PostMapping("/create")
-    @Operation(summary = "(DEV) Tạo mới một user")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nhập vào các trường thông tin cho 1 user")
-    public ResponseEntity<Message> createUser(@RequestBody UserDTO userDTO) {
-        return us.createUser(userDTO);
-    }
-
     @DeleteMapping("/{id}")
     @Operation(summary = "Xóa một user bằng id")
     @Parameter(name = "id", description = "Nhập vào id của user muốn xóa")
