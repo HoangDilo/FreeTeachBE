@@ -76,4 +76,21 @@ public class TeacherController {
     ) {
         return documentService.createMyDocumentPost(user, documentPostDTO);
     }
+
+    @PutMapping("/my/document/{id}")
+    public ResponseEntity<Message> editMyDocument(
+            @AuthenticationPrincipal UserEntity user,
+            @RequestBody DocumentPostDTO documentPostDTO,
+            @PathVariable Long id
+    ) {
+        return documentService.editDocumentPost(user, id, documentPostDTO);
+    }
+
+    @DeleteMapping("/my/document/{id}")
+    public ResponseEntity<Message> deleteMyDocument(
+            @AuthenticationPrincipal UserEntity user,
+            @PathVariable Long id
+    ) {
+        return documentService.deleteDocumentPost(user, id);
+    }
 }
