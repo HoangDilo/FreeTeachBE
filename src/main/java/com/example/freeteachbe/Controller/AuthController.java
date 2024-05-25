@@ -23,6 +23,7 @@ public class AuthController {
     @Operation(summary = "Đăng nhập")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nhập vào tên người dùng và mật khẩu để đăng nhập")
     public ResponseEntity<Message> login(@RequestBody LoginDTO loginDTO) {
+        System.out.println("checkechk");
         return authService.login(loginDTO);
     }
     @PostMapping("/register")

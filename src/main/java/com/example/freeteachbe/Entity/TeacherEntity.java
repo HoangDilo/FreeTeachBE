@@ -70,6 +70,10 @@ public class TeacherEntity {
         this.documentPosts = documentPosts;
     }
 
+    public void addDocumentPost(DocumentPostEntity documentPost) {
+        this.documentPosts.add(documentPost);
+    }
+
     public void setId(Long id) {
         this.id = id;
     }

@@ -1,6 +1,7 @@
 package com.example.freeteachbe.Configuartion;
 
 import com.example.freeteachbe.Entity.Role;
+import com.example.freeteachbe.Entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.juli.logging.Log;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -27,10 +30,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/teacher/**")
-                                .hasRole("TEACHER")
-                                .requestMatchers("/student/my/**")
-                                .hasRole("STUDENT")
                                 .requestMatchers("/auth/login",
                                         "/auth/register",
                                         "/swagger",
