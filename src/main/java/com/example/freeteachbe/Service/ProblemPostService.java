@@ -62,6 +62,7 @@ public class ProblemPostService {
                                 .builder()
                                 .description(problemPostEntity.getDescription())
                                 .image_url(problemPostEntity.getImage_url())
+                                .created_at(problemPostEntity.getCreated_at())
                                 .subject_name(problemPostEntity.getSubject().getSubjectName())
                                 .build())
                 .toList();
