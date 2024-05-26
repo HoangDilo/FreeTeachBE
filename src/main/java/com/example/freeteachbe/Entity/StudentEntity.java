@@ -22,6 +22,16 @@ public class StudentEntity {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
+    @OneToMany(mappedBy = "student")
+    private Set<ProblemPostEntity> problemPosts;
+
+    public Set<ProblemPostEntity> getProblemPosts() {
+        return problemPosts;
+    }
+
+    public void setProblemPosts(Set<ProblemPostEntity> problemPosts) {
+        this.problemPosts = problemPosts;
+    }
 
     public StudentEntity(int grade, Set<SubjectEntity> subjects, UserEntity user) {
         this.grade = grade;

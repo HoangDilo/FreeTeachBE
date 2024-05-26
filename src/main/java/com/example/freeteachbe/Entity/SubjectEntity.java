@@ -20,6 +20,8 @@ public class SubjectEntity {
     private Set<TeacherEntity> teachers;
     @OneToMany(mappedBy = "subject")
     private Set<DocumentPostEntity> documentPosts;
+    @OneToMany(mappedBy = "subject")
+    private Set<ProblemPostEntity> problemPosts;
 
     public SubjectEntity(Long id, String subjectName, Set<StudentEntity> students) {
         this.id = id;

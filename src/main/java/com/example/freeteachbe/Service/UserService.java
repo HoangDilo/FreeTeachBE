@@ -30,17 +30,6 @@ public class UserService {
     public List<UserEntity> getAllUser() {
         return ur.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
-    public ResponseEntity<Message> createUser(UserDTO userDTO) {
-        UserEntity user = new UserEntity(
-                userDTO.getName(),
-                userDTO.getEmail(),
-                userDTO.getAvatarURL(),
-                userDTO.getUsername(),
-                userDTO.getPassword(),
-                userDTO.getRole());
-        ur.save(user);
-        return ResponseEntity.status(200).body(new Message("Thêm mới người dùng thành công"));
-    }
     public ResponseEntity<Message> deleteUser(Long id) {
         Optional<UserEntity> userFound = ur.findById(id);
         if(userFound.isPresent()) {
