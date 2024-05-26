@@ -25,8 +25,15 @@ public class ProblemPostController {
             @RequestParam int page,
             @RequestParam int limit
             ) {
-        System.out.println("vai lon");
         return problemPostService.getRecommendPosts(user, page, limit);
+    }
+
+    @GetMapping("/list")
+    public List<ProblemPostData> getAllPosts(
+            @RequestParam int page,
+            @RequestParam int limit
+    ) {
+        return problemPostService.getAllProblemPosts(page, limit);
     }
 
     @PostMapping
@@ -34,5 +41,13 @@ public class ProblemPostController {
             @AuthenticationPrincipal UserEntity user,
             @RequestBody ProblemPostDTO problemPostDTO) {
         return  problemPostService.createNewRecommendPost(user, problemPostDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Message> deletePost(
+            @AuthenticationPrincipal UserEntity user,
+            @PathVariable Long id
+    ) {
+        return problemPostService.deletePost(user, id);
     }
 }

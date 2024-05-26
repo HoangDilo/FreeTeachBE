@@ -28,6 +28,6 @@ public class ProblemPostEntity {
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
-    @Column
+    @Column(name = "created_at")
     private LocalDateTime created_at;
 }
