@@ -30,35 +30,38 @@ public class ProblemPostService {
     private final SubjectRepository subjectRepository;
     private final AnswerRepository answerRepository;
 
-    public List<ProblemPostData> getAllProblemPosts(int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "created_at"));
+    public List<ProblemPostData> getListProblemPosts(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
         return problemPostRepository.findAll(pageable)
                 .stream()
-                .map(problemPostEntity -> {
-                    Long studentId = problemPostEntity.getStudent().getId();
+                .map(problem -> {
+                    Long studentId = problem.getStudent().getId();
                     StudentEntity student = studentRepository.findById(studentId).get();
                     UserEntity user = student.getUser();
                     return ProblemPostData
                             .builder()
-                            .id(problemPostEntity.getId())
-                            .description(problemPostEntity.getDescription())
-                            .image_url(problemPostEntity.getImage_url())
+                            .id(problem.getId())
+                            .description(problem.getDescription())
+                            .image_url(problem.getImage_url())
                             .student_name(user.getName())
                             .student_avatar_url(user.getAvatarURL())
-                            .created_at(problemPostEntity.getCreated_at())
-                            .subject_name(problemPostEntity.getSubject().getSubjectName())
+                            .created_at(problem.getCreatedAt())
+                            .subject_name(problem.getSubject().getSubjectName())
                             .build();
                 })
                 .collect(Collectors.toList());
     }
 
     public List<ProblemPostData> getRecommendPosts(UserEntity user, int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "created_at"));
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
         Set<SubjectEntity> subjectEntitySet = null;
         if (studentRepository.findByUser(user).isPresent()) {
             subjectEntitySet = studentRepository.findByUser(user).get().getSubjects();
         } else if (teacherRepository.findByUser(user).isPresent()) {
             subjectEntitySet = teacherRepository.findByUser(user).get().getSubjects();
+        }
+        if (subjectEntitySet == null) {
+            return getListProblemPosts(page, limit);
         }
         Set<Long> subjectIds = subjectEntitySet.stream().map(subject -> subject.getId()).collect(Collectors.toSet());
         return problemPostRepository.findBySubjects(subjectIds, pageable)
@@ -74,7 +77,7 @@ public class ProblemPostService {
                             .image_url(problemPostEntity.getImage_url())
                             .student_name(userPosted.getName())
                             .student_avatar_url(userPosted.getAvatarURL())
-                            .created_at(problemPostEntity.getCreated_at())
+                            .created_at(problemPostEntity.getCreatedAt())
                             .subject_name(problemPostEntity.getSubject().getSubjectName())
                             .build();
                 })
@@ -95,7 +98,7 @@ public class ProblemPostService {
                         .image_url(problemPostDTO.getImage_url())
                         .subject(subject)
                         .student(studentEntity)
-                        .created_at(LocalDateTime.now())
+                        .createdAt(LocalDateTime.now())
                         .build());
                 return ResponseEntity.ok(new Message("Thêm mới một câu hỏi thành công"));
             }
@@ -162,11 +165,20 @@ public class ProblemPostService {
     }
 
     public ResponseEntity<Message> createAnswer(UserEntity user, Long postId, AnswerDTO answerDTO) {
-        Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
-        if (problemPostEntityOptional.isPresent()) {
-            ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
-            
+        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(user);
+        if (teacherEntityOptional.isPresent()) {
+            Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
+            if (problemPostEntityOptional.isPresent()) {
+                ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
+                answerRepository.save(AnswerEntity.builder()
+                        .answer(answerDTO.getAnswer())
+                        .answerAvatarURL(answerDTO.getAnswer_image_url())
+                        .post(problemPostEntity)
+                        .teacher(teacherEntityOptional.get())
+                        .build());
+            }
+            return ResponseEntity.status(404).body(new Message("Không tìm thấy bài viết này"));
         }
-        return ResponseEntity.status(404).body(new Message("Không tìm thấy bài viết này"));
+        return ResponseEntity.status(403).body(new Message("Bạn phải là gia sư để trả lời câu hỏi"));
     }
 }

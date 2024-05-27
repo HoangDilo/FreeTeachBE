@@ -29,8 +29,8 @@ public class ProblemPostEntity {
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
-    @Column
-    private LocalDateTime created_at;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
     @OneToMany(mappedBy = "post")
     private Set<AnswerEntity> answers;
     @Column

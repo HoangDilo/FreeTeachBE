@@ -36,7 +36,7 @@ public class ProblemPostController {
             @RequestParam int page,
             @RequestParam int limit
     ) {
-        return problemPostService.getAllProblemPosts(page, limit);
+        return problemPostService.getListProblemPosts(page, limit);
     }
 
     @PostMapping
