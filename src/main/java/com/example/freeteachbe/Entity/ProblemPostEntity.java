@@ -31,6 +31,7 @@ public class ProblemPostEntity {
     private SubjectEntity subject;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column
     @OneToMany(mappedBy = "post")
     private Set<AnswerEntity> answers;
     @Column

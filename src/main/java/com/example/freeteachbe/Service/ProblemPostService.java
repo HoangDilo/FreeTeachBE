@@ -133,11 +133,10 @@ public class ProblemPostService {
                 if (studentEntityOptional.get().getProblemPosts().contains(problemPostEntity)) {
                     Optional<SubjectEntity> subjectEntityOptional = subjectRepository.findById(postDTO.getSubject_id());
                     if (subjectEntityOptional.isPresent()) {
-                        problemPostRepository.save(ProblemPostEntity.builder()
-                                .description(postDTO.getDescription())
-                                .image_url(postDTO.getImage_url())
-                                .subject(subjectEntityOptional.get())
-                                .build());
+                        problemPostEntity.setDescription(postDTO.getDescription());
+                        problemPostEntity.setImage_url(postDTO.getImage_url());
+                        problemPostEntity.setSubject(subjectEntityOptional.get());
+                        problemPostRepository.save(problemPostEntity);
                         return ResponseEntity.ok(new Message("Sửa câu hỏi thành công"));
                     }
                     return ResponseEntity.status(400).body(new Message("Môn học không tồn tại"));
@@ -152,6 +151,7 @@ public class ProblemPostService {
         Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
         if (problemPostEntityOptional.isPresent()) {
             ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
+            Set<AnswerEntity> answerEntities = problemPostEntity.getAnswers();
             return problemPostEntity.getAnswers().stream().map(answerEntity ->
                     AnswerData.builder()
                             .id(answerEntity.getId())
@@ -176,6 +176,7 @@ public class ProblemPostService {
                         .post(problemPostEntity)
                         .teacher(teacherEntityOptional.get())
                         .build());
+                return ResponseEntity.ok(new Message("Thêm câu trả lời thành công"));
             }
             return ResponseEntity.status(404).body(new Message("Không tìm thấy bài viết này"));
         }
