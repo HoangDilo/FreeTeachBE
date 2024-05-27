@@ -35,6 +35,9 @@ public class TeacherEntity {
     @Column
     @OneToMany(mappedBy = "teacher")
     private Set<DocumentPostEntity> documentPosts;
+    @Column
+    @OneToMany(mappedBy = "teacher")
+    private Set<AnswerEntity> answers;
 
     public TeacherEntity(int pricePerHour, String description, LocalTime activeTimeStart, LocalTime activeTimeEnd, String activeDays, Set<SubjectEntity> subjects, UserEntity user) {
         this.pricePerHour = pricePerHour;
@@ -44,6 +47,14 @@ public class TeacherEntity {
         this.activeDays = activeDays;
         this.user = user;
         this.subjects = subjects;
+    }
+
+    public Set<AnswerEntity> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Set<AnswerEntity> answers) {
+        this.answers = answers;
     }
 
     public UserEntity getUser() {

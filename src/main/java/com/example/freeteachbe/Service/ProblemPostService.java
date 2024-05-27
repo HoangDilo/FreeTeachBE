@@ -1,7 +1,9 @@
 package com.example.freeteachbe.Service;
 
+import com.example.freeteachbe.DTO.BodyPayload.AnswerDTO;
 import com.example.freeteachbe.DTO.BodyPayload.ProblemPostDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.AnswerData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.ProblemPostData;
 import com.example.freeteachbe.Entity.*;
 import com.example.freeteachbe.Repository.*;
@@ -10,9 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +28,11 @@ public class ProblemPostService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final SubjectRepository subjectRepository;
-    private final UserRepository userRepository;
+    private final AnswerRepository answerRepository;
 
     public List<ProblemPostData> getAllProblemPosts(int page, int limit) {
-        return problemPostRepository.findAll()
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "created_at"));
+        return problemPostRepository.findAll(pageable)
                 .stream()
                 .map(problemPostEntity -> {
                     Long studentId = problemPostEntity.getStudent().getId();
@@ -116,5 +119,54 @@ public class ProblemPostService {
             return ResponseEntity.status(404).body(new Message("Không tìm thấy câu hỏi này"));
         }
         return ResponseEntity.status(403).body(new Message("Bạn phải là học sinh để có thể xóa câu hỏi"));
+    }
+
+    public ResponseEntity<Message> editPost(UserEntity user, Long postId, ProblemPostDTO postDTO) {
+        Optional<StudentEntity> studentEntityOptional = studentRepository.findByUser(user);
+        if (studentEntityOptional.isPresent()) {
+            Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
+            if (problemPostEntityOptional.isPresent()) {
+                ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
+                if (studentEntityOptional.get().getProblemPosts().contains(problemPostEntity)) {
+                    Optional<SubjectEntity> subjectEntityOptional = subjectRepository.findById(postDTO.getSubject_id());
+                    if (subjectEntityOptional.isPresent()) {
+                        problemPostRepository.save(ProblemPostEntity.builder()
+                                .description(postDTO.getDescription())
+                                .image_url(postDTO.getImage_url())
+                                .subject(subjectEntityOptional.get())
+                                .build());
+                        return ResponseEntity.ok(new Message("Sửa câu hỏi thành công"));
+                    }
+                    return ResponseEntity.status(400).body(new Message("Môn học không tồn tại"));
+                }
+            }
+            return ResponseEntity.status(404).body(new Message("Không tìm thấy câu hỏi này"));
+        }
+        return ResponseEntity.status(403).body(new Message("Bạn phải là học sinh để có thể sửa câu hỏi"));
+    }
+
+    public List<AnswerData> getPostAnswers(Long postId) {
+        Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
+        if (problemPostEntityOptional.isPresent()) {
+            ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
+            return problemPostEntity.getAnswers().stream().map(answerEntity ->
+                    AnswerData.builder()
+                            .id(answerEntity.getId())
+                            .answer(answerEntity.getAnswer())
+                            .answer_image_url(answerEntity.getAnswerAvatarURL())
+                            .teacher_name(answerEntity.getTeacher().getUser().getName())
+                            .teacher_avatar_url(answerEntity.getTeacher().getUser().getAvatarURL())
+                            .build()).toList();
+        }
+        return null;
+    }
+
+    public ResponseEntity<Message> createAnswer(UserEntity user, Long postId, AnswerDTO answerDTO) {
+        Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
+        if (problemPostEntityOptional.isPresent()) {
+            ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
+            
+        }
+        return ResponseEntity.status(404).body(new Message("Không tìm thấy bài viết này"));
     }
 }

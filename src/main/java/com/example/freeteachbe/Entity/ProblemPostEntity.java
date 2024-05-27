@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Data
@@ -28,6 +29,10 @@ public class ProblemPostEntity {
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
-    @Column(name = "created_at")
+    @Column
     private LocalDateTime created_at;
+    @OneToMany(mappedBy = "post")
+    private Set<AnswerEntity> answers;
+    @Column
+    private Long bestAnswerId;
 }
