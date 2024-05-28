@@ -10,6 +10,7 @@ import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.DocumentRepository;
 import com.example.freeteachbe.Repository.SubjectRepository;
 import com.example.freeteachbe.Repository.TeacherRepository;
+import com.example.freeteachbe.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,20 @@ public class DocumentService {
     private final TeacherRepository teacherRepository;
     private final SubjectRepository subjectRepository;
     private final DocumentRepository documentRepository;
+    private final UserRepository userRepository;
+
+    private TeacherEntity _getTeacherById(Long userId) {
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(userEntity);
+            if (teacherEntityOptional.isPresent()) {
+                return teacherEntityOptional.get();
+            }
+        }
+        return null;
+    }
+
     public Set<DocumentData> getMyDocumentPost(UserEntity user) {
         Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(user);
         if (teacherEntityOptional.isPresent()) {
@@ -97,14 +112,17 @@ public class DocumentService {
     }
 
     public ResponseEntity<List<DocumentData>> getDocumentOfATeacher(Long id) {
-        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findById(id);
-        return teacherEntityOptional.map(teacherEntity -> ResponseEntity.ok(teacherEntity.getDocumentPosts()
+        TeacherEntity teacherEntity = _getTeacherById(id);
+        if (teacherEntity == null) {
+            return ResponseEntity.status(404).body(null);
+        }
+        return ResponseEntity.ok(teacherEntity.getDocumentPosts()
                 .stream().map(post -> new DocumentData(
                         post.getId(),
                         post.getDescription(),
                         post.getImageURL(),
                         post.getSubject().getSubjectName()
                 ))
-                .toList())).orElseGet(() -> ResponseEntity.status(404).body(null));
+                .toList());
     }
 }

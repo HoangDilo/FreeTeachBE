@@ -10,6 +10,7 @@ import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.FeedbackRepository;
 import com.example.freeteachbe.Repository.StudentRepository;
 import com.example.freeteachbe.Repository.TeacherRepository;
+import com.example.freeteachbe.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,22 +26,33 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final UserRepository userRepository;
+    private TeacherEntity _getTeacherById(Long userId) {
+        Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
+        if (userEntityOptional.isPresent()) {
+            UserEntity userEntity = userEntityOptional.get();
+            Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(userEntity);
+            if (teacherEntityOptional.isPresent()) {
+                return teacherEntityOptional.get();
+            }
+        }
+        return null;
+    }
     public ResponseEntity<Message> createFeedback(UserEntity user, FeedbackDTO feedbackDTO, Long teacherId) {
         Optional<StudentEntity> studentEntityOptional = studentRepository.findByUser(user);
         if (studentEntityOptional.isPresent()) {
-            Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findById(teacherId);
-            if (teacherEntityOptional.isPresent()) {
+            TeacherEntity teacherEntity = _getTeacherById(teacherId);
+            if (teacherEntity != null) {
                 double point = feedbackDTO.getPoint();
                 if (point < 0 || point > 5) {
                     return ResponseEntity.status(400).body(new Message("Điểm đánh giá không được vượt quá 5"));
                 }
-                TeacherEntity teacher = teacherEntityOptional.get();
                 StudentEntity student = studentEntityOptional.get();
                 feedbackRepository.save(FeedbackEntity.builder()
                         .description(feedbackDTO.getDescription())
                         .point(feedbackDTO.getPoint())
                         .student(student)
-                        .teacher(teacher)
+                        .teacher(teacherEntity)
                         .build());
                 return ResponseEntity.status(200).body(new Message("Tạo đánh giá thành công"));
             }
@@ -50,9 +62,8 @@ public class FeedbackService {
     }
 
     public List<FeedbackData> getTeacherFeedback(Long teacherId) {
-        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findById(teacherId);
-        if (teacherEntityOptional.isPresent()) {
-            TeacherEntity teacherEntity = teacherEntityOptional.get();
+        TeacherEntity teacherEntity = _getTeacherById(teacherId);
+        if (teacherEntity != null) {
             return teacherEntity.getFeedbacks().stream().map(
                     feedback -> FeedbackData.builder()
                             .id(feedback.getId())
@@ -65,9 +76,9 @@ public class FeedbackService {
     }
 
     public ResponseEntity<Double> getAveragePoint(Long teacherId) {
-        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findById(teacherId);
-        if (teacherEntityOptional.isPresent()) {
-            Set<FeedbackEntity> feedbackEntities = teacherEntityOptional.get().getFeedbacks();
+        TeacherEntity teacherEntity = _getTeacherById(teacherId);
+        if (teacherEntity != null) {
+            Set<FeedbackEntity> feedbackEntities = teacherEntity.getFeedbacks();
             OptionalDouble avarageOptional = feedbackEntities.stream().mapToDouble(FeedbackEntity::getPoint).average();
             if (avarageOptional.isPresent()) {
                 return ResponseEntity.ok(avarageOptional.getAsDouble());

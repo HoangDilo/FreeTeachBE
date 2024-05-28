@@ -69,6 +69,7 @@ public class TeacherService {
         }
         return ResponseEntity.status(400).body(new Message("Bạn đã đăng ký làm học sinh hoặc gia sư rồi"));
     }
+
     private TeacherEntity _getTeacherById(Long userId) {
         Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
         if (userEntityOptional.isPresent()) {
@@ -80,6 +81,7 @@ public class TeacherService {
         }
         return null;
     }
+
     public ResponseEntity<TeacherData> getTeacherById(Long id) {
         TeacherEntity teacherEntity = _getTeacherById(id);
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
@@ -87,28 +89,27 @@ public class TeacherService {
             UserEntity userEntity = userEntityOptional.get();
             return ResponseEntity.status(200).body(
                     new TeacherData(userEntity.getId(),
-                    userEntity.getName(),
-                    userEntity.getEmail(),
-                    userEntity.getAvatarURL(),
-                    userEntity.getUsername(),
-                    userEntity.getMoney(),
-                    teacherEntity.getPricePerHour(),
-                    teacherEntity.getDescription(),
-                    teacherEntity.getActiveTimeStart().toString(),
-                    teacherEntity.getActiveTimeEnd().toString(),
-                    teacherEntity.getActiveDays()));
+                            userEntity.getName(),
+                            userEntity.getEmail(),
+                            userEntity.getAvatarURL(),
+                            userEntity.getUsername(),
+                            userEntity.getMoney(),
+                            teacherEntity.getPricePerHour(),
+                            teacherEntity.getDescription(),
+                            teacherEntity.getActiveTimeStart().toString(),
+                            teacherEntity.getActiveTimeEnd().toString(),
+                            teacherEntity.getActiveDays()));
         }
         return ResponseEntity.status(404).body(null);
     }
 
     public ResponseEntity<List<SubjectData>> getTeacherSubjects(Long id) {
-        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findById(id);
-        if (teacherEntityOptional.isPresent()) {
-            TeacherEntity teacherEntity = teacherEntityOptional.get();
-            Set<SubjectEntity> subjectEntitySet = teacherEntity.getSubjects();
-            return ResponseEntity.status(200).body(subjectEntitySet.stream().map(subjectEntity ->
-                    new SubjectData(subjectEntity.getId(), subjectEntity.getSubjectName())).toList());
+        TeacherEntity teacherEntity = _getTeacherById(id);
+        if (teacherEntity == null) {
+            return ResponseEntity.status(404).body(null);
         }
-        return ResponseEntity.status(404).body(null);
+        Set<SubjectEntity> subjectEntitySet = teacherEntity.getSubjects();
+        return ResponseEntity.status(200).body(subjectEntitySet.stream().map(subjectEntity ->
+                new SubjectData(subjectEntity.getId(), subjectEntity.getSubjectName())).toList());
     }
 }
