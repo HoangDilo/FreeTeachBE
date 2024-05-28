@@ -173,7 +173,7 @@ public class ProblemPostService {
                 answerRepository.save(AnswerEntity.builder()
                         .answer(answerDTO.getAnswer())
                         .answerAvatarURL(answerDTO.getAnswer_image_url())
-                        .post(problemPostEntity)
+                        .postProblem(problemPostEntity)
                         .teacher(teacherEntityOptional.get())
                         .build());
                 return ResponseEntity.ok(new Message("Thêm câu trả lời thành công"));
@@ -182,4 +182,5 @@ public class ProblemPostService {
         }
         return ResponseEntity.status(403).body(new Message("Bạn phải là gia sư để trả lời câu hỏi"));
     }
+
 }

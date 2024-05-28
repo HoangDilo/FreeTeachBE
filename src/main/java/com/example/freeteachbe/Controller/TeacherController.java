@@ -56,10 +56,12 @@ public class TeacherController {
         return teacherService.getTeacherById(id);
     }
 
-    @GetMapping("/subjects")
+    @GetMapping("{id}/subjects")
     @Operation(summary = "Lấy ra danh sách câc môn học chuyên môn của một gia sư")
-    public ResponseEntity<List<SubjectData>> getTeacherSubjects(@AuthenticationPrincipal UserEntity user) {
-        return teacherService.getTeacherSubjects(user);
+    public ResponseEntity<List<SubjectData>> getTeacherSubjects(
+            @PathVariable Long id
+    ) {
+        return teacherService.getTeacherSubjects(id);
     }
 
     @GetMapping("/my/document")
@@ -92,5 +94,12 @@ public class TeacherController {
             @PathVariable Long id
     ) {
         return documentService.deleteDocumentPost(user, id);
+    }
+
+    @PostMapping("/{id}/document")
+    public ResponseEntity<List<DocumentData>> getDocumentOfATeacher(
+            @PathVariable Long id
+    ) {
+        return documentService.getDocumentOfATeacher(id);
     }
 }

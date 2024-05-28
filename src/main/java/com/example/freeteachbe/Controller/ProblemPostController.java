@@ -5,6 +5,8 @@ import com.example.freeteachbe.DTO.BodyPayload.ProblemPostDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.AnswerData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.ProblemPostData;
+import com.example.freeteachbe.Entity.AnswerEntity;
+import com.example.freeteachbe.Entity.ProblemPostEntity;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Service.ProblemPostService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +17,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/post")
@@ -22,12 +25,13 @@ import java.util.List;
 @Tag(name = "Post")
 public class ProblemPostController {
     private final ProblemPostService problemPostService;
+
     @GetMapping("/list/recommended")
     public List<ProblemPostData> getRecommendedPosts(
             @AuthenticationPrincipal UserEntity user,
             @RequestParam int page,
             @RequestParam int limit
-            ) {
+    ) {
         return problemPostService.getRecommendPosts(user, page, limit);
     }
 
@@ -43,7 +47,7 @@ public class ProblemPostController {
     public ResponseEntity<Message> createNewPost(
             @AuthenticationPrincipal UserEntity user,
             @RequestBody ProblemPostDTO problemPostDTO) {
-        return  problemPostService.createNewRecommendPost(user, problemPostDTO);
+        return problemPostService.createNewRecommendPost(user, problemPostDTO);
     }
 
     @DeleteMapping("/{id}")

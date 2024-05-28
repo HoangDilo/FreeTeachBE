@@ -2,8 +2,8 @@ package com.example.freeteachbe.Service;
 
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.BodyPayload.UserDTO;
-import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.RoleData;
-import com.example.freeteachbe.Entity.UserEntity;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.*;
+import com.example.freeteachbe.Entity.*;
 import com.example.freeteachbe.Repository.StudentRepository;
 import com.example.freeteachbe.Repository.TeacherRepository;
 import com.example.freeteachbe.Repository.UserRepository;
@@ -13,8 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -83,5 +84,58 @@ public class UserService {
         user.setEmail(email);
         ur.save(user);
         return new Message("Đôi email thành công");
+    }
+
+    public UserData getUserInfo(UserEntity user) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        if (user.getRole().name().equals("TEACHER")) {
+            TeacherEntity teacherEntity = tr.findByUser(user).get();
+            return new TeacherData(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getAvatarURL(),
+                    user.getUsername(),
+                    user.getMoney(),
+                    teacherEntity.getPricePerHour(),
+                    teacherEntity.getDescription(),
+                    teacherEntity.getActiveDays(),
+                    teacherEntity.getActiveTimeStart().format(formatter),
+                    teacherEntity.getActiveTimeEnd().format(formatter)
+            );
+        } else if (user.getRole().name().equals("STUDENT")) {
+            StudentEntity student = sr.findByUser(user).get();
+            return new StudentData(
+                    user.getId(),
+                    student.getGrade(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getAvatarURL(),
+                    user.getUsername(),
+                    user.getMoney()
+            );
+        }
+        return null;
+    }
+
+    public Set<SubjectData> getMySubjects(UserEntity user) {
+        Optional<TeacherEntity> teacherEntityOptional = tr.findByUser(user);
+        if (teacherEntityOptional.isPresent()) {
+            return teacherEntityOptional.get().getSubjects().stream()
+                    .sorted(Comparator.comparing(SubjectEntity::getId))
+                    .map(subject ->
+                            new SubjectData(subject.getId(), subject.getSubjectName()))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+        } else {
+            Optional<StudentEntity> studentEntityOptional = sr.findByUser(user);
+            if (studentEntityOptional.isPresent()) {
+                return studentEntityOptional.get().getSubjects().stream()
+                        .sorted(Comparator.comparing(SubjectEntity::getId))
+                        .map(subject ->
+                        new SubjectData(subject.getId(), subject.getSubjectName()))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
+            }
+        }
+        return null;
     }
 }

@@ -3,6 +3,8 @@ package com.example.freeteachbe.Controller;
 import com.example.freeteachbe.DTO.BodyPayload.*;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.RoleData;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.UserData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.UserInfoData;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Service.AuthService;
@@ -17,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Tag(name = "User")
@@ -80,9 +83,16 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<UserInfoData> getMyInfo(
+    public UserData getMyInfo(
             @AuthenticationPrincipal UserEntity user
     ) {
-        return null;
+        return us.getUserInfo(user);
+    }
+
+    @GetMapping("info/subjects")
+    public Set<SubjectData> getMySubjects(
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        return us.getMySubjects(user);
     }
 }

@@ -101,8 +101,8 @@ public class TeacherService {
         return ResponseEntity.status(404).body(null);
     }
 
-    public ResponseEntity<List<SubjectData>> getTeacherSubjects(UserEntity user) {
-        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findByUser(user);
+    public ResponseEntity<List<SubjectData>> getTeacherSubjects(Long id) {
+        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findById(id);
         if (teacherEntityOptional.isPresent()) {
             TeacherEntity teacherEntity = teacherEntityOptional.get();
             Set<SubjectEntity> subjectEntitySet = teacherEntity.getSubjects();

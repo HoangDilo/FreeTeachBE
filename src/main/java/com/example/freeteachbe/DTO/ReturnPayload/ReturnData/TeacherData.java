@@ -1,6 +1,9 @@
 package com.example.freeteachbe.DTO.ReturnPayload.ReturnData;
 
+import com.example.freeteachbe.Entity.SubjectEntity;
+
 import java.time.LocalTime;
+import java.util.Set;
 
 public class TeacherData extends UserData {
     private int pricePerHour;
@@ -8,6 +11,7 @@ public class TeacherData extends UserData {
     private String activeTimeStart;
     private String activeTimeEnd;
     private String activeDays;
+
 
     public TeacherData(Long id, String name, String email, String avatarURL, String username, int money, int pricePerHour, String description, String activeTimeStart, String activeTimeEnd, String activeDays) {
         super(id, name, email, avatarURL, username, money);

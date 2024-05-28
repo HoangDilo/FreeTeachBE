@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -93,5 +94,17 @@ public class DocumentService {
             }
         }
         return ResponseEntity.status(404).body(new Message("Không tìm thấy bài viết này"));
+    }
+
+    public ResponseEntity<List<DocumentData>> getDocumentOfATeacher(Long id) {
+        Optional<TeacherEntity> teacherEntityOptional = teacherRepository.findById(id);
+        return teacherEntityOptional.map(teacherEntity -> ResponseEntity.ok(teacherEntity.getDocumentPosts()
+                .stream().map(post -> new DocumentData(
+                        post.getId(),
+                        post.getDescription(),
+                        post.getImageURL(),
+                        post.getSubject().getSubjectName()
+                ))
+                .toList())).orElseGet(() -> ResponseEntity.status(404).body(null));
     }
 }

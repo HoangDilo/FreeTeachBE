@@ -31,9 +31,73 @@ public class ProblemPostEntity {
     private SubjectEntity subject;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @Column
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "postProblem")
     private Set<AnswerEntity> answers;
     @Column
     private Long bestAnswerId;
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
+    }
+
+    public StudentEntity getStudent() {
+        return student;
+    }
+
+    public void setStudent(StudentEntity student) {
+        this.student = student;
+    }
+
+    public SubjectEntity getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectEntity subject) {
+        this.subject = subject;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Set<AnswerEntity> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Set<AnswerEntity> answers) {
+        this.answers = answers;
+    }
+
+    public Long getBestAnswerId() {
+        return bestAnswerId;
+    }
+
+    public void setBestAnswerId(Long bestAnswerId) {
+        this.bestAnswerId = bestAnswerId;
+    }
 }
