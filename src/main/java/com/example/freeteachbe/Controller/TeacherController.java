@@ -4,12 +4,14 @@ import com.example.freeteachbe.DTO.BodyPayload.DocumentPostDTO;
 import com.example.freeteachbe.DTO.BodyPayload.TeacherDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.DocumentData;
+import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.FeedbackData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.TeacherData;
 import com.example.freeteachbe.Entity.TeacherEntity;
 import com.example.freeteachbe.Entity.UserEntity;
 import com.example.freeteachbe.Repository.TeacherRepository;
 import com.example.freeteachbe.Service.DocumentService;
+import com.example.freeteachbe.Service.FeedbackService;
 import com.example.freeteachbe.Service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,6 +32,8 @@ public class TeacherController {
     private TeacherService teacherService;
     @Autowired
     private DocumentService documentService;
+    @Autowired
+    private FeedbackService feedbackService;
 
     @GetMapping
     @Operation(summary = "Lấy ra danh sách các gia sư của hệ thống")
@@ -101,5 +105,12 @@ public class TeacherController {
             @PathVariable Long id
     ) {
         return documentService.getDocumentOfATeacher(id);
+    }
+
+    @GetMapping("/my/feedback")
+    public List<FeedbackData> getMyFeedback(
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        return feedbackService.getTeacherFeedback(user.getId());
     }
 }

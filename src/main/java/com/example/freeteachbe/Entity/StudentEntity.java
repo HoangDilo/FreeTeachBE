@@ -24,6 +24,16 @@ public class StudentEntity {
     private UserEntity user;
     @OneToMany(mappedBy = "student")
     private Set<ProblemPostEntity> problemPosts;
+    @OneToMany(mappedBy = "student")
+    private Set<FeedbackEntity> feedbacks;
+
+    public Set<FeedbackEntity> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<FeedbackEntity> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
 
     public Set<ProblemPostEntity> getProblemPosts() {
         return problemPosts;

@@ -38,6 +38,8 @@ public class TeacherEntity {
     @Column
     @OneToMany(mappedBy = "teacher")
     private Set<AnswerEntity> answers;
+    @OneToMany(mappedBy = "teacher")
+    private Set<FeedbackEntity> feedbacks;
 
     public TeacherEntity(int pricePerHour, String description, LocalTime activeTimeStart, LocalTime activeTimeEnd, String activeDays, Set<SubjectEntity> subjects, UserEntity user) {
         this.pricePerHour = pricePerHour;
@@ -47,6 +49,14 @@ public class TeacherEntity {
         this.activeDays = activeDays;
         this.user = user;
         this.subjects = subjects;
+    }
+
+    public Set<FeedbackEntity> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<FeedbackEntity> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 
     public Set<AnswerEntity> getAnswers() {
