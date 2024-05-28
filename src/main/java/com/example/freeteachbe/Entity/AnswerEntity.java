@@ -1,16 +1,11 @@
 package com.example.freeteachbe.Entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "answer")
 public class AnswerEntity {
     @Id
@@ -26,6 +21,11 @@ public class AnswerEntity {
     @ManyToOne
     @JoinColumn(name = "teacher_id", nullable = false)
     private TeacherEntity teacher;
+    @Column
+    private LocalDateTime createdAt;
+    public AnswerEntity() {
+
+    }
 
     public Long getId() {
         return id;
@@ -55,8 +55,8 @@ public class AnswerEntity {
         return postProblem;
     }
 
-    public void setPostProblem(ProblemPostEntity postProblem) {
-        this.postProblem = postProblem;
+    public void setPostProblem(ProblemPostEntity postProblems) {
+        this.postProblem = postProblems;
     }
 
     public TeacherEntity getTeacher() {
@@ -65,5 +65,21 @@ public class AnswerEntity {
 
     public void setTeacher(TeacherEntity teacher) {
         this.teacher = teacher;
+    }
+
+    public AnswerEntity(String answer, String answerAvatarURL, ProblemPostEntity postProblem, TeacherEntity teacher, LocalDateTime createdAt) {
+        this.answer = answer;
+        this.answerAvatarURL = answerAvatarURL;
+        this.postProblem = postProblem;
+        this.teacher = teacher;
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

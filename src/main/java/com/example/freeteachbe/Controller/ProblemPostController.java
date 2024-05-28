@@ -47,7 +47,7 @@ public class ProblemPostController {
     public ResponseEntity<Message> createNewPost(
             @AuthenticationPrincipal UserEntity user,
             @RequestBody ProblemPostDTO problemPostDTO) {
-        return problemPostService.createNewRecommendPost(user, problemPostDTO);
+        return problemPostService.createNewPost(user, problemPostDTO);
     }
 
     @DeleteMapping("/{id}")

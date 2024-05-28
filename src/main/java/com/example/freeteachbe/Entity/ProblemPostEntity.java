@@ -31,7 +31,7 @@ public class ProblemPostEntity {
     private SubjectEntity subject;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    @OneToMany(mappedBy = "postProblem")
+    @OneToMany(mappedBy = "postProblem", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AnswerEntity> answers;
     @Column
     private Long bestAnswerId;

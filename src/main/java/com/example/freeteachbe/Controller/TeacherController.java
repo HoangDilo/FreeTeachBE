@@ -96,7 +96,7 @@ public class TeacherController {
         return documentService.deleteDocumentPost(user, id);
     }
 
-    @PostMapping("/{id}/document")
+    @GetMapping("/{id}/document")
     public ResponseEntity<List<DocumentData>> getDocumentOfATeacher(
             @PathVariable Long id
     ) {

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -84,7 +85,7 @@ public class ProblemPostService {
                 .toList();
     }
 
-    public ResponseEntity<Message> createNewRecommendPost(UserEntity user, ProblemPostDTO problemPostDTO) {
+    public ResponseEntity<Message> createNewPost(UserEntity user, ProblemPostDTO problemPostDTO) {
 
         Optional<StudentEntity> studentEntityOptional = studentRepository.findByUser(user);
         if (studentEntityOptional.isPresent()) {
@@ -151,14 +152,16 @@ public class ProblemPostService {
         Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
         if (problemPostEntityOptional.isPresent()) {
             ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
-            Set<AnswerEntity> answerEntities = problemPostEntity.getAnswers();
-            return problemPostEntity.getAnswers().stream().map(answerEntity ->
+            return problemPostEntity.getAnswers().stream()
+                    .sorted(Comparator.comparing(AnswerEntity::getCreatedAt).reversed())
+                    .map(answerEntity ->
                     AnswerData.builder()
                             .id(answerEntity.getId())
                             .answer(answerEntity.getAnswer())
                             .answer_image_url(answerEntity.getAnswerAvatarURL())
                             .teacher_name(answerEntity.getTeacher().getUser().getName())
                             .teacher_avatar_url(answerEntity.getTeacher().getUser().getAvatarURL())
+                            .created_at(answerEntity.getCreatedAt())
                             .build()).toList();
         }
         return null;
@@ -170,12 +173,13 @@ public class ProblemPostService {
             Optional<ProblemPostEntity> problemPostEntityOptional = problemPostRepository.findById(postId);
             if (problemPostEntityOptional.isPresent()) {
                 ProblemPostEntity problemPostEntity = problemPostEntityOptional.get();
-                answerRepository.save(AnswerEntity.builder()
-                        .answer(answerDTO.getAnswer())
-                        .answerAvatarURL(answerDTO.getAnswer_image_url())
-                        .postProblem(problemPostEntity)
-                        .teacher(teacherEntityOptional.get())
-                        .build());
+                answerRepository.save(new AnswerEntity(
+                        answerDTO.getAnswer(),
+                        answerDTO.getAnswer_image_url(),
+                        problemPostEntity,
+                        teacherEntityOptional.get(),
+                        LocalDateTime.now()
+                ));
                 return ResponseEntity.ok(new Message("Thêm câu trả lời thành công"));
             }
             return ResponseEntity.status(404).body(new Message("Không tìm thấy bài viết này"));
