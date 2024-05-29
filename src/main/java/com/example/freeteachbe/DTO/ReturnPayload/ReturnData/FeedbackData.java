@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FeedbackData {
     private Long id;
+    private String student_name;
+    private String student_avatar_url;
     private String description;
     private double point;
 }

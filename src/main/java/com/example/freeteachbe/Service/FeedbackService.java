@@ -67,6 +67,8 @@ public class FeedbackService {
             return teacherEntity.getFeedbacks().stream().map(
                     feedback -> FeedbackData.builder()
                             .id(feedback.getId())
+                            .student_name(feedback.getStudent().getUser().getName())
+                            .student_avatar_url(feedback.getStudent().getUser().getAvatarURL())
                             .description(feedback.getDescription())
                             .point(feedback.getPoint())
                             .build())
