@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AnswerData {
     private Long id;
+    private Long teaccher_id;
     private String teacher_name;
     private String teacher_avatar_url;
     private String answer;

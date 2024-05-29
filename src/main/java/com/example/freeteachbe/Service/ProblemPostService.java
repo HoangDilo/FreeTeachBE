@@ -157,6 +157,7 @@ public class ProblemPostService {
                     .map(answerEntity ->
                     AnswerData.builder()
                             .id(answerEntity.getId())
+                            .teaccher_id(answerEntity.getTeacher().getUser().getId())
                             .answer(answerEntity.getAnswer())
                             .answer_image_url(answerEntity.getAnswerAvatarURL())
                             .teacher_name(answerEntity.getTeacher().getUser().getName())
