@@ -11,15 +11,17 @@ public class TeacherData extends UserData {
     private String activeTimeStart;
     private String activeTimeEnd;
     private String activeDays;
+    private double averagePoint;
 
 
-    public TeacherData(Long id, String name, String email, String avatarURL, String username, int money, int pricePerHour, String description, String activeTimeStart, String activeTimeEnd, String activeDays) {
+    public TeacherData(Long id, String name, String email, String avatarURL, String username, int money, int pricePerHour, String description, String activeTimeStart, String activeTimeEnd, String activeDays, double averagePoint) {
         super(id, name, email, avatarURL, username, money);
         this.pricePerHour = pricePerHour;
         this.description = description;
         this.activeTimeStart = activeTimeStart;
         this.activeTimeEnd = activeTimeEnd;
         this.activeDays = activeDays;
+        this.averagePoint = averagePoint;
     }
 
     public int getPricePerHour() {
@@ -60,5 +62,13 @@ public class TeacherData extends UserData {
 
     public void setActiveDays(String activeDays) {
         this.activeDays = activeDays;
+    }
+
+    public double getAveragePoint() {
+        return averagePoint;
+    }
+
+    public void setAveragePoint(double averagePoint) {
+        this.averagePoint = averagePoint;
     }
 }

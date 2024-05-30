@@ -4,10 +4,7 @@ import com.example.freeteachbe.DTO.BodyPayload.TeacherDTO;
 import com.example.freeteachbe.DTO.ReturnPayload.Message;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.SubjectData;
 import com.example.freeteachbe.DTO.ReturnPayload.ReturnData.TeacherData;
-import com.example.freeteachbe.Entity.Role;
-import com.example.freeteachbe.Entity.SubjectEntity;
-import com.example.freeteachbe.Entity.TeacherEntity;
-import com.example.freeteachbe.Entity.UserEntity;
+import com.example.freeteachbe.Entity.*;
 import com.example.freeteachbe.Repository.SubjectRepository;
 import com.example.freeteachbe.Repository.TeacherRepository;
 import com.example.freeteachbe.Repository.UserRepository;
@@ -19,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +40,9 @@ public class TeacherService {
         }
         return teacherEntityList.stream().map(teacherEntity -> {
             UserEntity userEntity = teacherEntity.getUser();
+            Set<FeedbackEntity> feedbackEntities = teacherEntity.getFeedbacks();
+            OptionalDouble avarageOptional = feedbackEntities.stream().mapToDouble(FeedbackEntity::getPoint).average();
+            double averagePoint = avarageOptional.isPresent() ? avarageOptional.getAsDouble() : 0;
             return new TeacherData(userEntity.getId(),
                     userEntity.getName(),
                     userEntity.getEmail(),
@@ -56,7 +53,8 @@ public class TeacherService {
                     teacherEntity.getDescription(),
                     teacherEntity.getActiveTimeStart().toString(),
                     teacherEntity.getActiveTimeEnd().toString(),
-                    teacherEntity.getActiveDays());
+                    teacherEntity.getActiveDays(),
+                    averagePoint);
         }).filter(teacher ->
                 teacher.getName().toLowerCase()
                         .contains(queryName.toLowerCase())).toList();
@@ -99,6 +97,9 @@ public class TeacherService {
         Optional<UserEntity> userEntityOptional = userRepository.findById(id);
         if (userEntityOptional.isPresent() && teacherEntity != null) {
             UserEntity userEntity = userEntityOptional.get();
+            Set<FeedbackEntity> feedbackEntities = teacherEntity.getFeedbacks();
+            OptionalDouble avarageOptional = feedbackEntities.stream().mapToDouble(FeedbackEntity::getPoint).average();
+            double averagePoint = avarageOptional.isPresent() ? avarageOptional.getAsDouble() : 0;
             return ResponseEntity.status(200).body(
                     new TeacherData(userEntity.getId(),
                             userEntity.getName(),
@@ -110,7 +111,8 @@ public class TeacherService {
                             teacherEntity.getDescription(),
                             teacherEntity.getActiveTimeStart().toString(),
                             teacherEntity.getActiveTimeEnd().toString(),
-                            teacherEntity.getActiveDays()));
+                            teacherEntity.getActiveDays(),
+                            averagePoint));
         }
         return ResponseEntity.status(404).body(null);
     }

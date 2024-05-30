@@ -90,6 +90,9 @@ public class UserService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
         if (user.getRole().name().equals("TEACHER")) {
             TeacherEntity teacherEntity = tr.findByUser(user).get();
+            Set<FeedbackEntity> feedbackEntities = teacherEntity.getFeedbacks();
+            OptionalDouble avarageOptional = feedbackEntities.stream().mapToDouble(FeedbackEntity::getPoint).average();
+            double averagePoint = avarageOptional.isPresent() ? avarageOptional.getAsDouble() : 0;
             return new TeacherData(
                     user.getId(),
                     user.getName(),
@@ -101,7 +104,8 @@ public class UserService {
                     teacherEntity.getDescription(),
                     teacherEntity.getActiveDays(),
                     teacherEntity.getActiveTimeStart().format(formatter),
-                    teacherEntity.getActiveTimeEnd().format(formatter)
+                    teacherEntity.getActiveTimeEnd().format(formatter),
+                    averagePoint
             );
         } else if (user.getRole().name().equals("STUDENT")) {
             StudentEntity student = sr.findByUser(user).get();
