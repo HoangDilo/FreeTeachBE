@@ -32,7 +32,7 @@ public class ProblemPostService {
     private final AnswerRepository answerRepository;
 
     public List<ProblemPostData> getListProblemPosts(int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         return problemPostRepository.findAll(pageable)
                 .stream()
                 .map(problem -> {
@@ -54,7 +54,7 @@ public class ProblemPostService {
     }
 
     public List<ProblemPostData> getRecommendPosts(UserEntity user, int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.ASC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(Sort.Direction.DESC, "createdAt"));
         Set<SubjectEntity> subjectEntitySet = null;
         if (studentRepository.findByUser(user).isPresent()) {
             subjectEntitySet = studentRepository.findByUser(user).get().getSubjects();
