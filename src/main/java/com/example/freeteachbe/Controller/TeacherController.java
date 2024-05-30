@@ -37,8 +37,13 @@ public class TeacherController {
 
     @GetMapping
     @Operation(summary = "Lấy ra danh sách các gia sư của hệ thống")
-    public List<TeacherData> getAllTeacher() {
-        return teacherService.getAllTeacher();
+    public List<TeacherData> getAllTeacher(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long subjectId,
+            @RequestParam(required = false, defaultValue = "pricePerHour") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortDir
+    ) {
+        return teacherService.getAllTeacher(name, subjectId, sortBy, sortDir);
     }
 
     @PostMapping("/register")

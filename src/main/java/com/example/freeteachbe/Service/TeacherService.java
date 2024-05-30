@@ -13,6 +13,8 @@ import com.example.freeteachbe.Repository.TeacherRepository;
 import com.example.freeteachbe.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +34,16 @@ public class TeacherService {
     @Autowired
     SubjectRepository subjectRepository;
 
-    public List<TeacherData> getAllTeacher() {
-        List<TeacherEntity> teacherEntityList = teacherRepository.findAll();
+    public List<TeacherData> getAllTeacher(String teacherName, Long subjectId, String sortBy, String sortDir) {
+        String queryName = teacherName == null ? "" : teacherName;
+        Sort.Direction direction = sortDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        List<TeacherEntity> teacherEntityList;
+        if (subjectId == null) {
+            teacherEntityList = teacherRepository.findAll(sort);
+        } else {
+            teacherEntityList = teacherRepository.findBySubject(subjectId, sort);
+        }
         return teacherEntityList.stream().map(teacherEntity -> {
             UserEntity userEntity = teacherEntity.getUser();
             return new TeacherData(userEntity.getId(),
@@ -47,7 +57,9 @@ public class TeacherService {
                     teacherEntity.getActiveTimeStart().toString(),
                     teacherEntity.getActiveTimeEnd().toString(),
                     teacherEntity.getActiveDays());
-        }).toList();
+        }).filter(teacher ->
+                teacher.getName().toLowerCase()
+                        .contains(queryName.toLowerCase())).toList();
     }
 
     public ResponseEntity<Message> registerTeacher(UserEntity user, TeacherDTO teacherDTO) {
